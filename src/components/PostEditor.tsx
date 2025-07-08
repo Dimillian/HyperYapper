@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { SessionManager } from '@/lib/storage/sessionStorage'
 import { 
   Send, 
   Image, 
@@ -30,10 +31,26 @@ const PLATFORMS = [
 
 export function PostEditor() {
   const [content, setContent] = useState('')
-  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(['twitter'])
+  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([])
   const [isExpanded, setIsExpanded] = useState(false)
+  const [connectedPlatforms, setConnectedPlatforms] = useState<string[]>([])
+
+  useEffect(() => {
+    // Get connected platforms and set default selection
+    const sessionManager = SessionManager.getInstance()
+    const connected = sessionManager.getConnectedPlatforms()
+    setConnectedPlatforms(connected)
+    
+    // Auto-select connected platforms
+    if (connected.length > 0) {
+      setSelectedPlatforms(connected)
+    }
+  }, [])
 
   const handlePlatformToggle = (platformId: string) => {
+    // Only allow toggling connected platforms
+    if (!connectedPlatforms.includes(platformId)) return
+    
     setSelectedPlatforms(prev => 
       prev.includes(platformId) 
         ? prev.filter(id => id !== platformId)
@@ -58,19 +75,31 @@ export function PostEditor() {
           {PLATFORMS.map(platform => {
             const Icon = platform.icon
             const isSelected = selectedPlatforms.includes(platform.id)
+            const isConnected = connectedPlatforms.includes(platform.id)
             
             return (
               <button
                 key={platform.id}
                 onClick={() => handlePlatformToggle(platform.id)}
+                disabled={!isConnected}
                 className={`flex items-center gap-2 px-3 py-2 rounded-lg border transition-all duration-200 ${
                   isSelected 
                     ? 'bg-purple-500/20 border-purple-400/50 text-purple-300' 
-                    : 'bg-black/40 border-gray-700 text-gray-400 hover:border-purple-500/30'
+                    : isConnected
+                    ? 'bg-black/40 border-gray-700 text-gray-400 hover:border-purple-500/30'
+                    : 'bg-black/20 border-gray-800 text-gray-600 cursor-not-allowed'
                 }`}
               >
-                <Icon className={`w-4 h-4 ${isSelected ? platform.color : 'text-gray-400'}`} />
+                <Icon className={`w-4 h-4 ${
+                  isSelected ? platform.color : 
+                  isConnected ? 'text-gray-400' : 'text-gray-600'
+                }`} />
                 <span className="text-sm">{platform.name}</span>
+                {!isConnected && (
+                  <span className="text-xs bg-gray-700 px-1.5 py-0.5 rounded">
+                    Not connected
+                  </span>
+                )}
               </button>
             )
           })}

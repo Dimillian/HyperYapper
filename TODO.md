@@ -20,18 +20,18 @@
 - [x] Post preview component
 
 ### Account Management
-- [ ] Account connection interface
+- [x] Account connection interface
 - [ ] OAuth flow for X (Twitter)
 - [ ] OAuth flow for Threads
-- [ ] OAuth flow for Mastodon
+- [x] OAuth flow for Mastodon
 - [ ] OAuth flow for BlueSky
-- [ ] Account switcher component
-- [ ] Connection status indicators
+- [x] Account switcher component
+- [x] Connection status indicators
 
 ### Cross-Posting Engine
-- [ ] Platform selection interface
+- [x] Platform selection interface
 - [ ] Post formatting for each platform
-- [ ] Character limit enforcement
+- [x] Character limit enforcement
 - [ ] Queue management system
 - [ ] Success/failure notifications
 - [ ] Retry failed posts

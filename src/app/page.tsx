@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { PostEditor } from '@/components/PostEditor'
+import { AccountManager } from '@/components/AccountManager'
 import Footer from '@/components/Footer'
 import { Zap, MessageCircle } from 'lucide-react'
 
@@ -25,20 +26,28 @@ export default function Home() {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 max-w-4xl mx-auto px-4 py-8 w-full">
-        <div className="space-y-8">
-          {/* Hero Section */}
-          <div className="text-center space-y-4">
-            <h2 className="text-4xl font-bold cyberpunk-text">
-              Cross-Post Like a Legend
-            </h2>
-            <p className="text-purple-300/80 text-lg">
-              Write once, yap everywhere. X, Threads, Mastodon, BlueSky.
-            </p>
+      <main className="flex-1 max-w-6xl mx-auto px-4 py-8 w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Left Column - Hero and Post Editor */}
+          <div className="lg:col-span-2 space-y-8">
+            {/* Hero Section */}
+            <div className="text-center space-y-4">
+              <h2 className="text-4xl font-bold cyberpunk-text">
+                Cross-Post Like a Legend
+              </h2>
+              <p className="text-purple-300/80 text-lg">
+                Write once, yap everywhere. X, Threads, Mastodon, BlueSky.
+              </p>
+            </div>
+
+            {/* Post Editor */}
+            <PostEditor />
           </div>
 
-          {/* Post Editor */}
-          <PostEditor />
+          {/* Right Column - Account Manager */}
+          <div className="lg:col-span-1">
+            <AccountManager />
+          </div>
         </div>
       </main>
 
