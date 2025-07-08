@@ -2,11 +2,12 @@
 
 import { useState } from 'react'
 import { PostEditor } from '@/components/PostEditor'
+import Footer from '@/components/Footer'
 import { Zap, MessageCircle } from 'lucide-react'
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-black flex flex-col">
       {/* Header */}
       <header className="border-b border-purple-500/20 bg-black/90 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-4xl mx-auto px-4 py-6">
@@ -24,7 +25,7 @@ export default function Home() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-4 py-8">
+      <main className="flex-1 max-w-4xl mx-auto px-4 py-8 w-full">
         <div className="space-y-8">
           {/* Hero Section */}
           <div className="text-center space-y-4">
@@ -38,13 +39,11 @@ export default function Home() {
 
           {/* Post Editor */}
           <PostEditor />
-
-          {/* Footer */}
-          <footer className="text-center text-purple-400/60 text-sm py-8">
-            <p>Built for creators who refuse to be limited by single platforms</p>
-          </footer>
         </div>
       </main>
+
+      {/* Footer */}
+      <Footer />
     </div>
   )
 }
