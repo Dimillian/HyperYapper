@@ -45,6 +45,7 @@
 - [x] Character limit enforcement
 - [x] Basic posting infrastructure
 - [x] Mastodon posting implementation
+- [x] Threads posting implementation (text posts)
 - [x] Success/failure notifications
 - [ ] Queue management system
 - [ ] Retry failed posts

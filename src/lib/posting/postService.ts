@@ -1,5 +1,6 @@
 import { SessionManager } from '@/lib/storage/sessionStorage'
 import { MastodonPoster } from './mastodon'
+import { ThreadsPoster } from './threads'
 import { PostContent, PostResult, PostStatus } from '@/types/post'
 
 export class PostService {
@@ -36,10 +37,15 @@ export class PostService {
             break
 
           case 'threads':
-            result = {
-              platform: 'threads',
-              success: false,
-              error: 'Threads posting not implemented yet'
+            const threadsSession = sessionManager.getThreadsSession()
+            if (!threadsSession) {
+              result = {
+                platform: 'threads',
+                success: false,
+                error: 'Threads account not connected'
+              }
+            } else {
+              result = await ThreadsPoster.post(threadsSession, content.text)
             }
             break
 
@@ -92,6 +98,15 @@ export class PostService {
           const mastodonSession = sessionManager.getMastodonSession()
           if (mastodonSession) {
             connectionStatus[platform] = await MastodonPoster.verifyConnection(mastodonSession)
+          } else {
+            connectionStatus[platform] = false
+          }
+          break
+
+        case 'threads':
+          const threadsSession = sessionManager.getThreadsSession()
+          if (threadsSession) {
+            connectionStatus[platform] = await ThreadsPoster.verifyConnection(threadsSession)
           } else {
             connectionStatus[platform] = false
           }
