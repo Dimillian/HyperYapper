@@ -9,10 +9,26 @@ export interface MastodonSession {
   expiresAt?: number
 }
 
+export interface ThreadsSession {
+  accessToken: string
+  expiresIn: number
+  tokenType: string
+  userInfo: ThreadsUserInfo
+  createdAt: number
+}
+
+export interface ThreadsUserInfo {
+  id: string
+  username: string
+  name: string
+  profilePictureUrl?: string
+  biography?: string
+}
+
 export interface SessionStorage {
   mastodon?: MastodonSession
   twitter?: any // TODO: implement later
-  threads?: any // TODO: implement later
+  threads?: ThreadsSession
   bluesky?: any // TODO: implement later
 }
 

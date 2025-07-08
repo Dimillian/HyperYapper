@@ -1,4 +1,4 @@
-import { SessionStorage, MastodonSession } from '@/types/auth'
+import { SessionStorage, MastodonSession, ThreadsSession } from '@/types/auth'
 
 const STORAGE_KEY = 'hyperyapper_sessions'
 
@@ -56,6 +56,16 @@ export class SessionManager {
       }
     }
 
+    // Check Threads session
+    if (this.sessions.threads) {
+      const session = this.sessions.threads
+      const expiresAt = session.createdAt + (session.expiresIn * 1000)
+      if (expiresAt < now) {
+        delete this.sessions.threads
+        hasChanges = true
+      }
+    }
+
     if (hasChanges) {
       this.saveSessions()
     }
@@ -73,6 +83,21 @@ export class SessionManager {
 
   removeMastodonSession(): void {
     delete this.sessions.mastodon
+    this.saveSessions()
+  }
+
+  // Threads session methods
+  setThreadsSession(session: ThreadsSession): void {
+    this.sessions.threads = session
+    this.saveSessions()
+  }
+
+  getThreadsSession(): ThreadsSession | null {
+    return this.sessions.threads || null
+  }
+
+  removeThreadsSession(): void {
+    delete this.sessions.threads
     this.saveSessions()
   }
 
@@ -103,6 +128,12 @@ export class SessionManager {
         const mastodonSession = this.sessions.mastodon
         if (!mastodonSession) return false
         return !mastodonSession.expiresAt || mastodonSession.expiresAt > now
+      
+      case 'threads':
+        const threadsSession = this.sessions.threads
+        if (!threadsSession) return false
+        const expiresAt = threadsSession.createdAt + (threadsSession.expiresIn * 1000)
+        return expiresAt > now
       
       default:
         return false

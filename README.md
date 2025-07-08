@@ -71,12 +71,58 @@ npm install
 
 # Set up environment variables
 cp .env.example .env.local
-# Add your social media API keys
+# Add your social media API keys (see Setup section below)
 
 # Start development server
 npm run dev
 
 # Open http://localhost:3000
+```
+
+## ⚙️ Platform Setup
+
+### Threads (Meta)
+
+1. **Create a Meta App**:
+   - Go to [Meta for Developers](https://developers.facebook.com/)
+   - Create a new app and enable Threads API
+   - Add your domain to the app settings
+
+2. **Configure Environment Variables**:
+   ```bash
+   # In your .env.local file
+   NEXT_PUBLIC_META_APP_ID=your_meta_app_id
+   META_APP_SECRET=your_meta_app_secret
+   ```
+
+3. **Required Permissions**:
+   - `threads_basic` (required for all endpoints)
+   - `threads_content_publish` (for posting content)
+
+4. **OAuth Flow**:
+   - Users will be redirected to Meta's authorization page
+   - After approval, they'll be redirected back to `/auth/threads/callback`
+   - Access tokens are valid for 60 days and can be refreshed
+
+### Mastodon
+
+1. **No Setup Required**:
+   - HyperYapper dynamically registers with any Mastodon instance
+   - Users enter their instance URL (e.g., `mastodon.social`)
+   - OAuth flow handles app registration automatically
+
+2. **Supported Features**:
+   - Public posts up to 500 characters (instance-dependent)
+   - Account verification and connection status
+   - Automatic token management
+
+### X (Twitter) - Coming Soon
+
+API access restrictions have made integration challenging. We're exploring alternative approaches.
+
+### BlueSky - Coming Soon
+
+AT Protocol integration is in development.
 ```
 
 ## 📱 Platform Support

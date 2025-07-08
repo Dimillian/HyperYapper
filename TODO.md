@@ -33,7 +33,7 @@
 ### Account Management
 - [x] Account connection interface
 - [ ] OAuth flow for X (Twitter)
-- [ ] OAuth flow for Threads
+- [x] OAuth flow for Threads
 - [x] OAuth flow for Mastodon
 - [ ] OAuth flow for BlueSky
 - [x] Account switcher component
