@@ -4,6 +4,8 @@ import { useState, useEffect, useCallback } from 'react'
 import { SessionManager } from '@/lib/storage/sessionStorage'
 import { PlatformButton } from '@/components/PlatformButton'
 import { PLATFORMS } from '@/types/platform'
+import { FaXTwitter } from 'react-icons/fa6'
+import { SiThreads, SiMastodon, SiBluesky } from 'react-icons/si'
 import { 
   Send, 
   Image, 
@@ -18,6 +20,23 @@ const PLATFORM_LIMITS = {
   threads: 500,
   mastodon: 500,
   bluesky: 300
+}
+
+const getPlatformIcon = (platformId: string) => {
+  const iconProps = { className: "w-4 h-4" }
+  
+  switch (platformId) {
+    case 'twitter':
+      return <FaXTwitter {...iconProps} />
+    case 'threads':
+      return <SiThreads {...iconProps} />
+    case 'mastodon':
+      return <SiMastodon {...iconProps} />
+    case 'bluesky':
+      return <SiBluesky {...iconProps} />
+    default:
+      return null
+  }
 }
 
 export function PostEditor() {
@@ -145,15 +164,17 @@ export function PostEditor() {
               {selectedPlatforms.map(platformId => {
                 const platform = PLATFORMS.find(p => p.id === platformId)
                 if (!platform) return null
+                const Icon = getPlatformIcon(platformId)
                 return (
                   <div
                     key={platformId}
-                    className="w-4 h-4 rounded-full"
                     style={{ 
-                      backgroundColor: platform.brandColor,
+                      color: platform.brandColor,
                       filter: `drop-shadow(0 0 4px ${platform.glowColor})`
                     }}
-                  />
+                  >
+                    {Icon}
+                  </div>
                 )
               })}
             </div>
