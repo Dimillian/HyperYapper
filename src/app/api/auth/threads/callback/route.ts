@@ -23,8 +23,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Exchange code for access token
-    const tokenUrl = new URL('https://graph.facebook.com/v23.0/oauth/access_token')
+    // Exchange code for access token (using Threads Graph API for token exchange)
+    const tokenUrl = new URL('https://graph.threads.net/oauth/access_token')
     tokenUrl.searchParams.set('client_id', META_APP_ID)
     tokenUrl.searchParams.set('redirect_uri', redirectUri)
     tokenUrl.searchParams.set('client_secret', META_APP_SECRET)
@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
 }
 
 async function getUserInfo(accessToken: string): Promise<ThreadsUserInfo> {
-  const userUrl = new URL('https://graph.facebook.com/v23.0/me')
+  const userUrl = new URL('https://graph.threads.net/me')
   userUrl.searchParams.set('fields', 'id,username,name,threads_profile_picture_url,threads_biography')
   userUrl.searchParams.set('access_token', accessToken)
 

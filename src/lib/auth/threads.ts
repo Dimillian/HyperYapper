@@ -24,7 +24,7 @@ export class ThreadsAuth {
     // Store state for verification
     sessionStorage.setItem('threads_oauth_state', state)
     
-    const authUrl = new URL('https://www.facebook.com/v23.0/dialog/oauth')
+    const authUrl = new URL('https://threads.net/oauth/authorize')
     authUrl.searchParams.set('client_id', META_APP_ID)
     authUrl.searchParams.set('redirect_uri', redirectUri)
     authUrl.searchParams.set('scope', scope)
@@ -75,7 +75,7 @@ export class ThreadsAuth {
   static async verifyToken(accessToken: string): Promise<boolean> {
     try {
       // Simple verification by trying to get user info
-      const userUrl = new URL('https://graph.facebook.com/v23.0/me')
+      const userUrl = new URL('https://graph.threads.net/me')
       userUrl.searchParams.set('fields', 'id')
       userUrl.searchParams.set('access_token', accessToken)
 
