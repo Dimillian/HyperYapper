@@ -17,8 +17,8 @@ export class ThreadsAuth {
       throw new Error('NEXT_PUBLIC_META_APP_ID not configured')
     }
 
-    const redirectUri = encodeURIComponent(`${window.location.origin}/auth/threads/callback`)
-    const scope = encodeURIComponent(this.SCOPES.join(','))
+    const redirectUri = `${window.location.origin}/auth/threads/callback`
+    const scope = this.SCOPES.join(',')
     const state = this.generateState()
     
     // Store state for verification
