@@ -32,13 +32,15 @@ export function PostEditor() {
     setConnectedPlatforms(connected)
     
     // Update selected platforms to only include connected ones
-    setSelectedPlatforms(prev => prev.filter(platform => connected.includes(platform)))
-    
-    // Auto-select connected platforms if none are selected
-    if (connected.length > 0 && selectedPlatforms.length === 0) {
-      setSelectedPlatforms(connected)
-    }
-  }, [selectedPlatforms])
+    setSelectedPlatforms(prev => {
+      const filteredPlatforms = prev.filter(platform => connected.includes(platform))
+      // Auto-select connected platforms if none are selected and there are connected platforms
+      if (filteredPlatforms.length === 0 && connected.length > 0) {
+        return connected
+      }
+      return filteredPlatforms
+    })
+  }, [])
 
   useEffect(() => {
     refreshConnectedPlatforms()
