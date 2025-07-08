@@ -1,12 +1,12 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { ThreadsAuth } from '@/lib/auth/threads'
 import { SessionManager } from '@/lib/storage/sessionStorage'
 import { Loader2, CheckCircle, XCircle } from 'lucide-react'
 
-export default function ThreadsCallback() {
+function ThreadsCallbackContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading')
@@ -116,5 +116,22 @@ export default function ThreadsCallback() {
         )}
       </div>
     </div>
+  )
+}
+
+export default function ThreadsCallback() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-black flex items-center justify-center p-4">
+        <div className="glass-card p-8 max-w-md w-full text-center">
+          <Loader2 className="w-12 h-12 text-purple-400 animate-spin mx-auto mb-4" />
+          <h1 className="text-2xl font-bold text-purple-100 mb-2">
+            Loading...
+          </h1>
+        </div>
+      </div>
+    }>
+      <ThreadsCallbackContent />
+    </Suspense>
   )
 }
