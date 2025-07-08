@@ -3,7 +3,9 @@
 import { useState, useEffect, useCallback } from 'react'
 import { SessionManager } from '@/lib/storage/sessionStorage'
 import { PlatformButton } from '@/components/PlatformButton'
+import { PostService } from '@/lib/posting/postService'
 import { PLATFORMS } from '@/types/platform'
+import { PostStatus } from '@/types/post'
 import { FaXTwitter } from 'react-icons/fa6'
 import { SiThreads, SiMastodon, SiBluesky } from 'react-icons/si'
 import { 
@@ -12,7 +14,10 @@ import {
   Smile, 
   Hash, 
   AtSign, 
-  Wand2
+  Wand2,
+  CheckCircle,
+  AlertCircle,
+  Loader2
 } from 'lucide-react'
 
 const PLATFORM_LIMITS = {
@@ -44,6 +49,8 @@ export function PostEditor() {
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([])
   const [isExpanded, setIsExpanded] = useState(false)
   const [connectedPlatforms, setConnectedPlatforms] = useState<string[]>([])
+  const [postStatus, setPostStatus] = useState<PostStatus | null>(null)
+  const [isPosting, setIsPosting] = useState(false)
 
   const refreshConnectedPlatforms = useCallback(() => {
     const sessionManager = SessionManager.getInstance()
@@ -87,6 +94,40 @@ export function PostEditor() {
         ? prev.filter(id => id !== platformId)
         : [...prev, platformId]
     )
+  }
+
+  const handlePost = async () => {
+    if (!content.trim() || isOverLimit || selectedPlatforms.length === 0 || isPosting) {
+      return
+    }
+
+    setIsPosting(true)
+    setPostStatus(null)
+
+    try {
+      const result = await PostService.postToAll({
+        text: content.trim(),
+        platforms: selectedPlatforms
+      })
+
+      setPostStatus(result)
+
+      // If all posts were successful, clear the editor
+      const allSuccessful = result.results.every(r => r.success)
+      if (allSuccessful) {
+        setContent('')
+        setIsExpanded(false)
+      }
+    } catch (error) {
+      console.error('Posting error:', error)
+      setPostStatus({
+        isPosting: false,
+        results: [],
+        errors: [error instanceof Error ? error.message : 'Unknown error occurred']
+      })
+    } finally {
+      setIsPosting(false)
+    }
   }
 
   const getCharacterLimit = () => {
@@ -181,11 +222,21 @@ export function PostEditor() {
 
             {/* Post Button */}
             <button 
-              disabled={!content.trim() || isOverLimit || selectedPlatforms.length === 0}
+              onClick={handlePost}
+              disabled={!content.trim() || isOverLimit || selectedPlatforms.length === 0 || isPosting}
               className="flex items-center gap-2 px-6 py-2 bg-purple-500 hover:bg-purple-400 disabled:bg-gray-600/80 disabled:cursor-not-allowed rounded-lg transition-all duration-200 font-medium text-white neon-glow hover:neon-glow-strong"
             >
-              <Send className="w-4 h-4" />
-              <span>Yap</span>
+              {isPosting ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Posting...</span>
+                </>
+              ) : (
+                <>
+                  <Send className="w-4 h-4" />
+                  <span>Yap</span>
+                </>
+              )}
             </button>
           </div>
         </div>
@@ -195,6 +246,53 @@ export function PostEditor() {
           <div className="mt-4 p-4 bg-black/60 rounded-lg border border-purple-400/30 shadow-[0_0_15px_rgba(168,85,247,0.2)]">
             <div className="text-sm text-purple-300 mb-2 font-medium">Preview</div>
             <div className="text-purple-100 whitespace-pre-wrap leading-relaxed">{content}</div>
+          </div>
+        )}
+
+        {/* Post Results */}
+        {postStatus && (
+          <div className="mt-4 space-y-3">
+            {postStatus.results.map((result, index) => (
+              <div 
+                key={index}
+                className={`p-3 rounded-lg border ${
+                  result.success 
+                    ? 'bg-green-900/20 border-green-500/30' 
+                    : 'bg-red-900/20 border-red-500/30'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  {result.success ? (
+                    <CheckCircle className="w-4 h-4 text-green-400" />
+                  ) : (
+                    <AlertCircle className="w-4 h-4 text-red-400" />
+                  )}
+                  <span className="text-sm font-medium text-purple-100 capitalize">
+                    {result.platform}
+                  </span>
+                  {result.success ? (
+                    <span className="text-sm text-green-300">Posted successfully!</span>
+                  ) : (
+                    <span className="text-sm text-red-300">Failed to post</span>
+                  )}
+                </div>
+                {result.error && (
+                  <div className="mt-1 text-xs text-red-300">{result.error}</div>
+                )}
+                {result.postUrl && (
+                  <div className="mt-1">
+                    <a 
+                      href={result.postUrl} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-xs text-purple-300 hover:text-purple-200 underline"
+                    >
+                      View post →
+                    </a>
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
         )}
       </div>

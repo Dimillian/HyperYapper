@@ -41,10 +41,12 @@
 
 ### Cross-Posting Engine
 - [x] Platform selection interface
-- [ ] Post formatting for each platform
+- [x] Post formatting for each platform
 - [x] Character limit enforcement
+- [x] Basic posting infrastructure
+- [x] Mastodon posting implementation
+- [x] Success/failure notifications
 - [ ] Queue management system
-- [ ] Success/failure notifications
 - [ ] Retry failed posts
 - [ ] Post history tracking
 
