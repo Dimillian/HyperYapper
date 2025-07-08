@@ -51,6 +51,9 @@ function MastodonCallbackContent() {
         // Clean up temporary storage
         sessionStorage.removeItem('mastodon_app_data')
 
+        // Notify other components about session change
+        window.dispatchEvent(new CustomEvent('sessionChanged'))
+
         setStatus('success')
         
         // Redirect to home after a short delay
@@ -73,17 +76,17 @@ function MastodonCallbackContent() {
       <div className="glass-card p-8 max-w-md w-full text-center">
         {status === 'loading' && (
           <div className="space-y-4">
-            <Loader2 className="w-12 h-12 text-purple-400 animate-spin mx-auto" />
-            <h2 className="text-xl font-bold text-white">Connecting to Mastodon...</h2>
-            <p className="text-purple-300/70">Please wait while we complete your authentication.</p>
+            <Loader2 className="w-12 h-12 text-purple-300 animate-spin mx-auto drop-shadow-[0_0_8px_rgba(168,85,247,0.8)]" />
+            <h2 className="text-xl font-bold text-purple-100 glow-text">Connecting to Mastodon...</h2>
+            <p className="text-purple-200/80">Please wait while we complete your authentication.</p>
           </div>
         )}
 
         {status === 'success' && (
           <div className="space-y-4">
-            <CheckCircle className="w-12 h-12 text-green-400 mx-auto" />
-            <h2 className="text-xl font-bold text-white">Successfully Connected!</h2>
-            <p className="text-purple-300/70">
+            <CheckCircle className="w-12 h-12 text-green-300 mx-auto drop-shadow-[0_0_8px_rgba(34,197,94,0.8)]" />
+            <h2 className="text-xl font-bold text-purple-100 glow-text">Successfully Connected!</h2>
+            <p className="text-purple-200/80">
               Your Mastodon account has been connected. Redirecting you back to HyperYapper...
             </p>
           </div>
@@ -91,12 +94,12 @@ function MastodonCallbackContent() {
 
         {status === 'error' && (
           <div className="space-y-4">
-            <XCircle className="w-12 h-12 text-red-400 mx-auto" />
-            <h2 className="text-xl font-bold text-white">Connection Failed</h2>
-            <p className="text-purple-300/70 text-sm">{error}</p>
+            <XCircle className="w-12 h-12 text-red-300 mx-auto drop-shadow-[0_0_8px_rgba(239,68,68,0.8)]" />
+            <h2 className="text-xl font-bold text-purple-100 glow-text">Connection Failed</h2>
+            <p className="text-purple-200/80 text-sm">{error}</p>
             <button
               onClick={() => router.push('/')}
-              className="mt-4 px-6 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition-colors"
+              className="mt-4 px-6 py-2 bg-purple-500 hover:bg-purple-400 text-white rounded-lg transition-colors neon-glow font-medium"
             >
               Back to HyperYapper
             </button>
@@ -113,8 +116,8 @@ export default function MastodonCallbackPage() {
       <div className="min-h-screen bg-black flex items-center justify-center px-4">
         <div className="glass-card p-8 max-w-md w-full text-center">
           <div className="space-y-4">
-            <Loader2 className="w-12 h-12 text-purple-400 animate-spin mx-auto" />
-            <h2 className="text-xl font-bold text-white">Loading...</h2>
+            <Loader2 className="w-12 h-12 text-purple-300 animate-spin mx-auto drop-shadow-[0_0_8px_rgba(168,85,247,0.8)]" />
+            <h2 className="text-xl font-bold text-purple-100 glow-text">Loading...</h2>
           </div>
         </div>
       </div>

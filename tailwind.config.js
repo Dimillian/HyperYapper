@@ -30,12 +30,17 @@ module.exports = {
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
         purple: {
+          200: '#E9D5FF',
+          300: '#C4B5FD',
           400: '#A855F7',
-          500: '#9333EA',
+          500: '#9333EA', 
           600: '#7C3AED',
           700: '#6D28D9',
           800: '#5B21B6',
           900: '#4C1D95',
+          bright: '#C47DFF',
+          glow: '#A855F7',
+          neon: '#D8B4FE',
         },
       },
       fontFamily: {
