@@ -16,6 +16,10 @@
 - [x] Stronger neon glow effects and border visibility
 - [x] Cleaned up platform buttons (removed "Not connected" pills)
 - [x] Clicking disabled platform buttons opens account dropdown
+- [x] Refactored platform buttons into reusable PlatformButton component
+- [x] Added proper brand icons (X, Threads, Mastodon, BlueSky)
+- [x] Implemented brand color glows when selected/connected
+- [x] Updated platform indicators with brand colors
 
 ### Post Editor
 - [x] Basic text editor component

@@ -2,17 +2,15 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { SessionManager } from '@/lib/storage/sessionStorage'
+import { PlatformButton } from '@/components/PlatformButton'
+import { PLATFORMS } from '@/types/platform'
 import { 
   Send, 
   Image, 
   Smile, 
   Hash, 
   AtSign, 
-  Wand2,
-  Twitter,
-  Instagram,
-  Globe,
-  Zap
+  Wand2
 } from 'lucide-react'
 
 const PLATFORM_LIMITS = {
@@ -21,13 +19,6 @@ const PLATFORM_LIMITS = {
   mastodon: 500,
   bluesky: 300
 }
-
-const PLATFORMS = [
-  { id: 'twitter', name: 'X', icon: Twitter, color: 'text-blue-400', limit: PLATFORM_LIMITS.twitter },
-  { id: 'threads', name: 'Threads', icon: Instagram, color: 'text-pink-400', limit: PLATFORM_LIMITS.threads },
-  { id: 'mastodon', name: 'Mastodon', icon: Globe, color: 'text-indigo-400', limit: PLATFORM_LIMITS.mastodon },
-  { id: 'bluesky', name: 'BlueSky', icon: Zap, color: 'text-sky-400', limit: PLATFORM_LIMITS.bluesky }
-]
 
 export function PostEditor() {
   const [content, setContent] = useState('')
@@ -91,31 +82,15 @@ export function PostEditor() {
       <div className="glass-card p-6 space-y-4">
         {/* Platform Selection */}
         <div className="flex flex-wrap gap-2">
-          {PLATFORMS.map(platform => {
-            const Icon = platform.icon
-            const isSelected = selectedPlatforms.includes(platform.id)
-            const isConnected = connectedPlatforms.includes(platform.id)
-            
-            return (
-              <button
-                key={platform.id}
-                onClick={() => handlePlatformToggle(platform.id)}
-                className={`flex items-center gap-2 px-3 py-2 rounded-lg border transition-all duration-200 ${
-                  isSelected 
-                    ? 'bg-purple-500/30 border-purple-300/70 text-purple-100 neon-glow font-medium' 
-                    : isConnected
-                    ? 'bg-black/50 border-purple-400/30 text-purple-200 hover:border-purple-300/50 hover:bg-purple-500/10'
-                    : 'bg-black/20 border-gray-600/50 text-gray-500 hover:border-gray-500/70 cursor-pointer'
-                }`}
-              >
-                <Icon className={`w-4 h-4 ${
-                  isSelected ? `${platform.color} drop-shadow-[0_0_4px_rgba(168,85,247,0.6)]` : 
-                  isConnected ? 'text-purple-300' : 'text-gray-600'
-                }`} />
-                <span className="text-sm">{platform.name}</span>
-              </button>
-            )
-          })}
+          {PLATFORMS.map(platform => (
+            <PlatformButton
+              key={platform.id}
+              platform={platform}
+              isSelected={selectedPlatforms.includes(platform.id)}
+              isConnected={connectedPlatforms.includes(platform.id)}
+              onClick={handlePlatformToggle}
+            />
+          ))}
         </div>
 
         {/* Text Editor */}
@@ -168,11 +143,14 @@ export function PostEditor() {
               {selectedPlatforms.map(platformId => {
                 const platform = PLATFORMS.find(p => p.id === platformId)
                 if (!platform) return null
-                const Icon = platform.icon
                 return (
-                  <Icon 
-                    key={platformId} 
-                    className={`w-4 h-4 ${platform.color}`} 
+                  <div
+                    key={platformId}
+                    className="w-4 h-4 rounded-full"
+                    style={{ 
+                      backgroundColor: platform.brandColor,
+                      filter: `drop-shadow(0 0 4px ${platform.glowColor})`
+                    }}
                   />
                 )
               })}
