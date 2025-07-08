@@ -60,9 +60,15 @@ export class SessionManager {
     if (this.sessions.threads) {
       const session = this.sessions.threads
       const expiresAt = session.createdAt + (session.expiresIn * 1000)
+      const shouldRefresh = expiresAt - now < (24 * 60 * 60 * 1000) && expiresAt > now // Refresh if less than 24h left
+      
       if (expiresAt < now) {
+        // Token expired
         delete this.sessions.threads
         hasChanges = true
+      } else if (shouldRefresh) {
+        // Token expires soon, try to refresh it
+        this.refreshThreadsToken(session)
       }
     }
 
@@ -99,6 +105,40 @@ export class SessionManager {
   removeThreadsSession(): void {
     delete this.sessions.threads
     this.saveSessions()
+  }
+
+  private async refreshThreadsToken(session: ThreadsSession): Promise<void> {
+    try {
+      const response = await fetch('/api/auth/threads/refresh', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          accessToken: session.accessToken
+        })
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        if (data.token) {
+          // Update the session with refreshed token
+          const refreshedSession: ThreadsSession = {
+            ...session,
+            accessToken: data.token.accessToken,
+            expiresIn: data.token.expiresIn,
+            tokenType: data.token.tokenType,
+            createdAt: data.token.refreshedAt
+          }
+          this.setThreadsSession(refreshedSession)
+          console.log('Threads token refreshed successfully')
+        }
+      } else {
+        console.warn('Failed to refresh Threads token, will retry later')
+      }
+    } catch (error) {
+      console.error('Error refreshing Threads token:', error)
+    }
   }
 
   // General methods

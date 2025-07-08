@@ -23,14 +23,20 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Exchange code for access token (using Threads Graph API for token exchange)
-    const tokenUrl = new URL('https://graph.threads.net/oauth/access_token')
-    tokenUrl.searchParams.set('client_id', META_APP_ID)
-    tokenUrl.searchParams.set('redirect_uri', redirectUri)
-    tokenUrl.searchParams.set('client_secret', META_APP_SECRET)
-    tokenUrl.searchParams.set('code', code)
-
-    const tokenResponse = await fetch(tokenUrl.toString())
+    // Exchange code for access token (using correct Threads API endpoint)
+    const tokenResponse = await fetch('https://graph.threads.net/oauth/access_token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams({
+        client_id: META_APP_ID,
+        client_secret: META_APP_SECRET,
+        grant_type: 'authorization_code',
+        redirect_uri: redirectUri,
+        code: code
+      })
+    })
     
     if (!tokenResponse.ok) {
       const errorData = await tokenResponse.json().catch(() => ({}))
@@ -51,14 +57,17 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Exchange short-lived token for long-lived token
+    const longLivedToken = await exchangeForLongLivedToken(tokenData.access_token)
+    
     // Get user information
-    const userInfo = await getUserInfo(tokenData.access_token)
+    const userInfo = await getUserInfo(longLivedToken.access_token)
     
     // Return session data to client
     const sessionData = {
-      accessToken: tokenData.access_token,
-      expiresIn: tokenData.expires_in || 5184000, // Default 60 days
-      tokenType: tokenData.token_type || 'bearer',
+      accessToken: longLivedToken.access_token,
+      expiresIn: longLivedToken.expires_in || 5184000, // 60 days for long-lived tokens
+      tokenType: longLivedToken.token_type || 'bearer',
       userInfo,
       createdAt: Date.now()
     }
@@ -71,6 +80,33 @@ export async function POST(request: NextRequest) {
       { error: error instanceof Error ? error.message : 'Unknown error occurred' },
       { status: 500 }
     )
+  }
+}
+
+async function exchangeForLongLivedToken(shortLivedToken: string): Promise<{access_token: string, token_type: string, expires_in: number}> {
+  const tokenUrl = new URL('https://graph.threads.net/access_token')
+  tokenUrl.searchParams.set('grant_type', 'th_exchange_token')
+  tokenUrl.searchParams.set('client_secret', META_APP_SECRET!)
+  tokenUrl.searchParams.set('access_token', shortLivedToken)
+
+  const response = await fetch(tokenUrl.toString())
+  
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}))
+    console.error('Long-lived token exchange failed:', errorData)
+    // If long-lived token exchange fails, return the short-lived token
+    return {
+      access_token: shortLivedToken,
+      token_type: 'bearer',
+      expires_in: 3600 // 1 hour for short-lived tokens
+    }
+  }
+
+  const tokenData = await response.json()
+  return {
+    access_token: tokenData.access_token,
+    token_type: tokenData.token_type || 'bearer',
+    expires_in: tokenData.expires_in || 5184000 // 60 days default
   }
 }
 
