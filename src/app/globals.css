@@ -1,0 +1,90 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 0 0% 0%;
+  --foreground: 0 0% 100%;
+  --primary: 262 83% 58%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 262 83% 58%;
+  --secondary-foreground: 0 0% 100%;
+  --accent: 270 95% 75%;
+  --accent-foreground: 0 0% 0%;
+  --muted: 0 0% 15%;
+  --muted-foreground: 0 0% 65%;
+  --border: 262 83% 58%;
+  --input: 0 0% 15%;
+  --ring: 262 83% 58%;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-black/40 backdrop-blur-md border border-purple-500/20 rounded-lg;
+  }
+  
+  .glass-card-hover {
+    @apply glass-card hover:border-purple-400/40 hover:bg-black/60 transition-all duration-300;
+  }
+  
+  .neon-glow {
+    @apply shadow-[0_0_20px_rgba(139,92,246,0.3)];
+  }
+  
+  .neon-glow-strong {
+    @apply shadow-[0_0_30px_rgba(139,92,246,0.5),0_0_40px_rgba(168,85,247,0.3)];
+  }
+  
+  .cyberpunk-gradient {
+    @apply bg-gradient-to-r from-purple-600 via-purple-500 to-purple-400;
+  }
+  
+  .cyberpunk-text {
+    @apply text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-purple-600;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(139, 92, 246, 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(139, 92, 246, 0.5);
+}
+
+/* Selection styling */
+::selection {
+  background: rgba(139, 92, 246, 0.3);
+  color: white;
+}
+
+/* Focus ring styling */
+*:focus {
+  outline: 2px solid rgba(139, 92, 246, 0.5);
+  outline-offset: 2px;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
