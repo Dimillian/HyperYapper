@@ -106,13 +106,16 @@ export class BlueSkyService {
   static async uploadImage(
     session: BlueSkySession,
     imageFile: File
-  ): Promise<any | null> {
+  ): Promise<{ blob: any; aspectRatio: { width: number; height: number } } | null> {
     try {
       const agent = await this.getAgent(session)
       
       if (!agent) {
         throw new Error('Failed to create BlueSky agent')
       }
+
+      // Get image dimensions
+      const aspectRatio = await this.getImageAspectRatio(imageFile)
 
       // Convert File to Uint8Array
       const arrayBuffer = await imageFile.arrayBuffer()
@@ -123,11 +126,34 @@ export class BlueSkyService {
         encoding: imageFile.type,
       })
 
-      return uploadResponse.data.blob
+      return {
+        blob: uploadResponse.data.blob,
+        aspectRatio
+      }
     } catch (error) {
       console.error('Error uploading image to BlueSky:', error)
       return null
     }
+  }
+
+  private static async getImageAspectRatio(imageFile: File): Promise<{ width: number; height: number }> {
+    return new Promise((resolve, reject) => {
+      const img = new Image()
+      const objectUrl = URL.createObjectURL(imageFile)
+      
+      img.onload = () => {
+        URL.revokeObjectURL(objectUrl)
+        resolve({
+          width: img.naturalWidth,
+          height: img.naturalHeight
+        })
+      }
+      img.onerror = () => {
+        URL.revokeObjectURL(objectUrl)
+        reject(new Error('Failed to load image'))
+      }
+      img.src = objectUrl
+    })
   }
 
   static async createPostWithImage(
@@ -144,9 +170,9 @@ export class BlueSkyService {
       }
 
       // Upload the image first
-      const imageBlob = await this.uploadImage(session, imageFile)
+      const imageData = await this.uploadImage(session, imageFile)
       
-      if (!imageBlob) {
+      if (!imageData) {
         throw new Error('Failed to upload image')
       }
 
@@ -162,8 +188,9 @@ export class BlueSkyService {
         embed: {
           $type: 'app.bsky.embed.images',
           images: [{
-            image: imageBlob,
+            image: imageData.blob,
             alt: altText || '',
+            aspectRatio: imageData.aspectRatio,
           }],
         },
       })
