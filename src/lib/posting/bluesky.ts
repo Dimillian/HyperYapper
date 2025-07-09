@@ -34,10 +34,16 @@ export class BlueSkyPoster {
       }
 
       if (response) {
+        // Extract the post ID from the URI for the URL
+        // URI format: at://did:plc:xxx/app.bsky.feed.post/postId
+        const postId = response.uri.split('/').pop()
+        const postUrl = `https://bsky.app/profile/${session.handle}/post/${postId}`
+        
         return {
           platform: 'bluesky',
           success: true,
-          postId: response.uri
+          postId: response.uri,
+          postUrl: postUrl
         }
       } else {
         return {
