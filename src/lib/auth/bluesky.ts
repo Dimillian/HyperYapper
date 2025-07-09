@@ -19,11 +19,16 @@ export class BlueSkyAuth {
 
     const { BrowserOAuthClient } = await import('@atproto/oauth-client-browser')
     
-    // Both development and production use auto-discovery
-    // The client will look for metadata at current-origin/.well-known/oauth-client-metadata
-    this.oauthClient = new BrowserOAuthClient({
-      handleResolver: 'https://bsky.social',
-      responseMode: 'query'
+    // Determine the client ID based on environment
+    const isProduction = window.location.hostname.includes('hyperyapper.app')
+    const clientId = isProduction 
+      ? 'https://www.hyperyapper.app/.well-known/oauth-client-metadata'
+      : 'http://127.0.0.1:3000/.well-known/oauth-client-metadata'
+    
+    // Use the proper load method instead of constructor
+    this.oauthClient = await BrowserOAuthClient.load({
+      clientId: clientId,
+      handleResolver: 'https://bsky.social'
     })
 
     return this.oauthClient
