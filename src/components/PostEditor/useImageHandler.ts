@@ -75,6 +75,7 @@ export function useImageHandler() {
 
   const clearImages = useCallback(() => {
     setAttachedImages([])
+    setIsDragging(false)
   }, [])
 
   return {

@@ -5,22 +5,22 @@ import { SessionManager } from '@/lib/storage/sessionStorage'
 import { PlatformButton } from '@/components/PlatformButton'
 import { PostService } from '@/lib/posting/postService'
 import { PLATFORMS } from '@/types/platform'
-import { PostStatus } from '@/types/post'
 import { PLATFORM_LIMITS } from './types'
 import { useImageHandler } from './useImageHandler'
 import { DragDropOverlay } from './DragDropOverlay'
 import { TextArea } from './TextArea'
 import { ImagePreview } from './ImagePreview'
 import { Toolbar } from './Toolbar'
-import { PostResults } from './PostResults'
+import { useNotifications } from '../notifications'
 
 export function PostEditor() {
   const [content, setContent] = useState('')
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([])
   const [isExpanded, setIsExpanded] = useState(false)
   const [connectedPlatforms, setConnectedPlatforms] = useState<string[]>([])
-  const [postStatus, setPostStatus] = useState<PostStatus | null>(null)
   const [isPosting, setIsPosting] = useState(false)
+  
+  const { addNotification } = useNotifications()
   
   const fileInputRef = useRef<HTMLInputElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -87,7 +87,6 @@ export function PostEditor() {
     }
 
     setIsPosting(true)
-    setPostStatus(null)
 
     try {
       const result = await PostService.postToAll({
@@ -96,10 +95,44 @@ export function PostEditor() {
         images: attachedImages.map(img => img.file)
       })
 
-      setPostStatus(result)
+      // Create notification for the post results
+      const allSuccessful = result.results.every(r => r.success)
+      const someSuccessful = result.results.some(r => r.success)
+      
+      let notificationTitle = ''
+      let notificationMessage = ''
+      let notificationType: 'success' | 'error' | 'info' = 'info'
+
+      if (allSuccessful) {
+        notificationTitle = 'Posted successfully!'
+        notificationMessage = `Your post was published to ${selectedPlatforms.join(', ')}`
+        notificationType = 'success'
+      } else if (someSuccessful) {
+        const successCount = result.results.filter(r => r.success).length
+        const totalCount = result.results.length
+        notificationTitle = 'Partially posted'
+        notificationMessage = `Posted to ${successCount} of ${totalCount} platforms`
+        notificationType = 'error'
+      } else {
+        notificationTitle = 'Post failed'
+        notificationMessage = 'Could not post to any platform'
+        notificationType = 'error'
+      }
+
+      addNotification({
+        type: notificationType,
+        title: notificationTitle,
+        message: notificationMessage,
+        postResults: result.results.map(r => ({
+          platform: r.platform,
+          success: r.success,
+          postId: r.postId,
+          postUrl: r.postUrl,
+          error: r.error
+        }))
+      })
 
       // If all posts were successful, clear the editor
-      const allSuccessful = result.results.every(r => r.success)
       if (allSuccessful) {
         setContent('')
         clearImages()
@@ -107,10 +140,10 @@ export function PostEditor() {
       }
     } catch (error) {
       console.error('Posting error:', error)
-      setPostStatus({
-        isPosting: false,
-        results: [],
-        errors: [error instanceof Error ? error.message : 'Unknown error occurred']
+      addNotification({
+        type: 'error',
+        title: 'Post failed',
+        message: error instanceof Error ? error.message : 'Unknown error occurred'
       })
     } finally {
       setIsPosting(false)
@@ -185,16 +218,6 @@ export function PostEditor() {
           onPost={handlePost}
         />
 
-        {/* Preview Area */}
-        {content && (
-          <div className="mt-4 p-4 bg-black/60 rounded-lg border border-purple-400/30 shadow-[0_0_15px_rgba(168,85,247,0.2)]">
-            <div className="text-sm text-purple-300 mb-2 font-medium">Preview</div>
-            <div className="text-purple-100 whitespace-pre-wrap leading-relaxed">{content}</div>
-          </div>
-        )}
-
-        {/* Post Results */}
-        <PostResults postStatus={postStatus} />
       </div>
     </div>
   )

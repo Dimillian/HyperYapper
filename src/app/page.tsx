@@ -4,9 +4,12 @@ import { useState } from 'react'
 import { PostEditor } from '@/components/PostEditor'
 import { AccountDropdown } from '@/components/AccountDropdown'
 import Footer from '@/components/Footer'
+import { NotificationSidebar, useNotifications } from '@/components/notifications'
 import { Zap, MessageCircle } from 'lucide-react'
 
 export default function Home() {
+  const { notifications, dismissNotification, markAsRead, clearAll } = useNotifications()
+  
   return (
     <div className="min-h-screen bg-black flex flex-col">
       {/* Header */}
@@ -31,23 +34,34 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="flex-1 max-w-4xl mx-auto px-4 py-8 w-full">
-        <div className="space-y-8">
-          {/* Hero Section */}
-          <div className="text-center space-y-4">
-            <h2 className="text-4xl font-bold cyberpunk-text">
-              Cross-Post Like a Legend
-            </h2>
-            <p className="text-purple-200 text-lg font-medium glow-text">
-              Write once, yap everywhere. X, Threads, Mastodon, BlueSky.
-            </p>
-          </div>
+      {/* Main Content Area */}
+      <div className="flex-1 flex">
+        {/* Main Content */}
+        <main className="flex-1 max-w-4xl mx-auto px-4 py-8">
+          <div className="space-y-8">
+            {/* Hero Section */}
+            <div className="text-center space-y-4">
+              <h2 className="text-4xl font-bold cyberpunk-text">
+                Cross-Post Like a Legend
+              </h2>
+              <p className="text-purple-200 text-lg font-medium glow-text">
+                Write once, yap everywhere. X, Threads, Mastodon, BlueSky.
+              </p>
+            </div>
 
-          {/* Post Editor */}
-          <PostEditor />
-        </div>
-      </main>
+            {/* Post Editor */}
+            <PostEditor />
+          </div>
+        </main>
+
+        {/* Notification Sidebar */}
+        <NotificationSidebar
+          notifications={notifications}
+          onDismiss={dismissNotification}
+          onMarkAsRead={markAsRead}
+          onClearAll={clearAll}
+        />
+      </div>
 
       {/* Footer */}
       <Footer />

@@ -49,7 +49,9 @@ export class ThreadsPoster {
         platform: 'threads',
         success: true,
         postId: publishedPost.id,
-        postUrl: `https://www.threads.net/@${session.userInfo.username}/post/${publishedPost.id}`
+        // Note: Threads API returns numeric ID but post URLs use alphanumeric shortcodes
+        // The actual post URL format uses a different identifier not provided by the API
+        postUrl: `https://www.threads.com/@${session.userInfo.username}`
       }
     } catch (error) {
       console.error('Threads posting error:', error)

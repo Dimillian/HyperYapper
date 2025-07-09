@@ -27,8 +27,11 @@
 - [x] Character counter for each platform
 - [ ] Emoji picker integration
 - [ ] Draft auto-save functionality
-- [ ] Media attachment support (images)
-- [x] Post preview component
+- [x] Media attachment support (images, drag-and-drop, paste)
+- [x] Post preview component (removed - was cluttering UI)
+- [x] Refactored into modular component architecture
+- [x] Image preview thumbnails with removal capability
+- [x] File validation and error handling
 
 ### Account Management
 - [x] Account connection interface
@@ -44,9 +47,15 @@
 - [x] Post formatting for each platform
 - [x] Character limit enforcement
 - [x] Basic posting infrastructure
-- [x] Mastodon posting implementation
-- [x] Threads posting implementation (text posts)
-- [x] Success/failure notifications
+- [x] Mastodon posting implementation with image support
+- [x] Threads posting implementation with image support via Cloudflare R2
+- [x] Success/failure notifications (persistent sidebar system)
+- [x] Cloudflare R2 integration for image hosting
+- [x] Media upload API endpoint
+- [x] Image URL generation for Threads API
+- [x] Mastodon media upload with v2 API and polling
+- [x] Proper error handling and user feedback
+- [x] Post status tracking with links to published posts
 - [ ] Queue management system
 - [ ] Retry failed posts
 - [ ] Post history tracking
@@ -163,6 +172,10 @@
 ## 🔧 Technical Improvements
 
 ### Performance
+- [x] Cloudflare R2 CDN for media hosting
+- [x] Optimized component architecture with proper separation
+- [x] Efficient state management with React Context
+- [x] localStorage caching for notifications
 - [ ] Implement service workers
 - [ ] Image lazy loading
 - [ ] Infinite scroll optimization
@@ -186,8 +199,24 @@
 - [ ] Data export functionality
 - [ ] Account deletion workflow
 
+### Notification System
+- [x] Persistent notification sidebar
+- [x] Notification timeline with post history
+- [x] Dismissible notification cards
+- [x] Read/unread status tracking
+- [x] Batch notification actions (mark all read, clear all)
+- [x] localStorage persistence across page refreshes
+- [x] Post result details with platform-specific links
+- [x] Proper SSR hydration handling
+- [x] Notification state management with React Context
+- [x] Timeline view of all posting activity
+
 ## 🐛 Known Issues
-- [ ] TBD - Issues will be tracked as discovered
+- [x] ~~Threads API returns numeric post IDs but URLs use alphanumeric format~~ (Fixed: now links to user profile)
+- [x] ~~Post editor state not resetting after successful post~~ (Fixed: proper state management)
+- [x] ~~Mastodon OAuth missing write:media scope~~ (Fixed: added proper scopes)
+- [x] ~~Image preview cluttering UI~~ (Fixed: removed text preview, kept image thumbnails)
+- [x] ~~Notifications disappearing on page refresh~~ (Fixed: localStorage persistence)
 
 ## 💡 Future Ideas
 - [ ] Browser extension for quick posting
