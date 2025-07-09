@@ -1,0 +1,58 @@
+import { RefObject } from 'react'
+import { PLATFORM_LIMITS } from './types'
+
+interface TextAreaProps {
+  textareaRef: RefObject<HTMLTextAreaElement>
+  content: string
+  setContent: (content: string) => void
+  isExpanded: boolean
+  setIsExpanded: (expanded: boolean) => void
+  selectedPlatforms: string[]
+  onPaste: (e: React.ClipboardEvent) => void
+}
+
+export function TextArea({
+  textareaRef,
+  content,
+  setContent,
+  isExpanded,
+  setIsExpanded,
+  selectedPlatforms,
+  onPaste
+}: TextAreaProps) {
+  const getCharacterLimit = () => {
+    if (selectedPlatforms.length === 0) return 280
+    return Math.min(...selectedPlatforms.map(id => PLATFORM_LIMITS[id as keyof typeof PLATFORM_LIMITS]))
+  }
+
+  const currentLimit = getCharacterLimit()
+  const remaining = currentLimit - content.length
+  const isOverLimit = remaining < 0
+
+  return (
+    <div className="relative">
+      <textarea
+        ref={textareaRef}
+        value={content}
+        onChange={(e) => setContent(e.target.value)}
+        onFocus={() => setIsExpanded(true)}
+        onPaste={onPaste}
+        placeholder="What's happening? Time to yap..."
+        className={`w-full bg-black/70 border border-purple-400/40 rounded-lg p-4 text-purple-100 placeholder-purple-300/50 resize-none transition-all duration-200 focus:border-purple-300/70 focus:bg-black/80 focus:shadow-[0_0_20px_rgba(168,85,247,0.3)] ${
+          isExpanded ? 'h-32' : 'h-20'
+        } ${isOverLimit ? 'border-red-400/70 focus:border-red-400/70' : ''}`}
+      />
+      
+      {/* Character Counter */}
+      <div className="absolute bottom-2 right-2 text-sm font-medium">
+        <span className={`${
+          isOverLimit ? 'text-red-300 drop-shadow-[0_0_4px_rgba(239,68,68,0.6)]' : 
+          remaining < 20 ? 'text-yellow-300 drop-shadow-[0_0_4px_rgba(251,191,36,0.6)]' : 
+          'text-purple-300 drop-shadow-[0_0_4px_rgba(168,85,247,0.6)]'
+        }`}>
+          {remaining}
+        </span>
+      </div>
+    </div>
+  )
+}

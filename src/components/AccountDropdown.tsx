@@ -8,7 +8,6 @@ import { MastodonSession, ThreadsSession } from '@/types/auth'
 import { 
   User, 
   ChevronDown, 
-  Globe, 
   Plus, 
   LogOut, 
   ExternalLink,
@@ -16,6 +15,8 @@ import {
   AlertCircle,
   X
 } from 'lucide-react'
+import { FaXTwitter } from 'react-icons/fa6'
+import { SiThreads, SiMastodon, SiBluesky } from 'react-icons/si'
 
 export function AccountDropdown() {
   const [isOpen, setIsOpen] = useState(false)
@@ -166,7 +167,7 @@ export function AccountDropdown() {
             <div className="space-y-3">
               <div className="flex items-center justify-between p-3 bg-black/60 rounded-lg border border-purple-400/20">
                 <div className="flex items-center gap-3">
-                  <Globe className="w-5 h-5 text-indigo-300 drop-shadow-[0_0_4px_rgba(129,140,248,0.6)]" />
+                  <SiMastodon className="w-5 h-5 text-[#6364FF] drop-shadow-[0_0_4px_rgba(99,100,255,0.6)]" />
                   <div>
                     <div className="font-medium text-purple-100 text-sm">Mastodon</div>
                     {mastodonSession ? (
@@ -260,7 +261,7 @@ export function AccountDropdown() {
               {/* Threads Account */}
               <div className="flex items-center justify-between p-3 bg-black/60 rounded-lg border border-purple-400/20">
                 <div className="flex items-center gap-3">
-                  <span className="text-lg">📱</span>
+                  <SiThreads className="w-5 h-5 text-white drop-shadow-[0_0_4px_rgba(255,255,255,0.6)]" />
                   <div>
                     <div className="font-medium text-purple-100 text-sm">Threads</div>
                     {threadsSession ? (
@@ -304,26 +305,37 @@ export function AccountDropdown() {
 
               {/* Coming Soon Platforms */}
               <div className="space-y-2">
-                {[
-                  { name: 'X (Twitter)', icon: '𝕏' },
-                  { name: 'BlueSky', icon: '🦋' }
-                ].map((platform) => (
-                  <div key={platform.name} className="flex items-center justify-between p-3 bg-black/40 rounded-lg opacity-60 border border-purple-400/10">
-                    <div className="flex items-center gap-3">
-                      <span className="text-lg">{platform.icon}</span>
-                      <div>
-                        <div className="font-medium text-purple-200 text-sm">{platform.name}</div>
-                        <div className="text-xs text-purple-300/60">Coming soon</div>
-                      </div>
+                <div className="flex items-center justify-between p-3 bg-black/40 rounded-lg opacity-60 border border-purple-400/10">
+                  <div className="flex items-center gap-3">
+                    <FaXTwitter className="w-5 h-5 text-gray-400" />
+                    <div>
+                      <div className="font-medium text-purple-200 text-sm">X (Twitter)</div>
+                      <div className="text-xs text-purple-300/60">Coming soon</div>
                     </div>
-                    <button
-                      disabled
-                      className="px-2 py-1 bg-gray-600/60 text-gray-400 rounded text-xs cursor-not-allowed"
-                    >
-                      Soon
-                    </button>
                   </div>
-                ))}
+                  <button
+                    disabled
+                    className="px-2 py-1 bg-gray-600/60 text-gray-400 rounded text-xs cursor-not-allowed"
+                  >
+                    Soon
+                  </button>
+                </div>
+                
+                <div className="flex items-center justify-between p-3 bg-black/40 rounded-lg opacity-60 border border-purple-400/10">
+                  <div className="flex items-center gap-3">
+                    <SiBluesky className="w-5 h-5 text-gray-400" />
+                    <div>
+                      <div className="font-medium text-purple-200 text-sm">BlueSky</div>
+                      <div className="text-xs text-purple-300/60">Coming soon</div>
+                    </div>
+                  </div>
+                  <button
+                    disabled
+                    className="px-2 py-1 bg-gray-600/60 text-gray-400 rounded text-xs cursor-not-allowed"
+                  >
+                    Soon
+                  </button>
+                </div>
               </div>
             </div>
           </div>
