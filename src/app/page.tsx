@@ -29,9 +29,16 @@ const TAGLINES = [
 export default function Home() {
   const { notifications, dismissNotification, markAsRead, clearAll } = useNotifications()
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
+  const [currentTagline, setCurrentTagline] = useState(TAGLINES[0])
   
   // Handle OAuth callbacks
   useOAuthCallback()
+  
+  // Set random tagline on component mount
+  useEffect(() => {
+    const randomTagline = TAGLINES[Math.floor(Math.random() * TAGLINES.length)]
+    setCurrentTagline(randomTagline)
+  }, [])
   
   return (
     <div className="min-h-screen bg-black flex flex-col">
@@ -62,7 +69,7 @@ export default function Home() {
             {/* Hero Section */}
             <div className="text-center space-y-4">
               <h2 className="text-4xl font-bold cyberpunk-text">
-                Cross-Post Like a Legend
+                {currentTagline}
               </h2>
               <p className="text-purple-200 text-lg font-medium glow-text">
                 Write once, yap everywhere. Threads, Mastodon, BlueSky.
