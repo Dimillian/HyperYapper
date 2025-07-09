@@ -18,7 +18,7 @@ export const PLATFORMS: Platform[] = [
     id: 'threads',
     name: 'Threads',
     limit: 500,
-    brandColor: '#000000',
+    brandColor: '#ffffff',
     glowColor: 'rgba(255, 255, 255, 0.6)'
   },
   {
