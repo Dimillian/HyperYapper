@@ -23,3 +23,12 @@ export interface NotificationContextType {
   markAsRead: (id: string) => void
   clearAll: () => void
 }
+
+export interface NotificationSidebarProps {
+  notifications: Notification[]
+  onDismiss: (id: string) => void
+  onMarkAsRead: (id: string) => void
+  onClearAll: () => void
+  isCollapsed: boolean
+  onToggleCollapse: () => void
+}

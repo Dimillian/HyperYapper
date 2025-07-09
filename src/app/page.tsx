@@ -9,6 +9,7 @@ import { Zap, MessageCircle } from 'lucide-react'
 
 export default function Home() {
   const { notifications, dismissNotification, markAsRead, clearAll } = useNotifications()
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
   
   return (
     <div className="min-h-screen bg-black flex flex-col">
@@ -35,9 +36,9 @@ export default function Home() {
       </header>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex">
+      <div className="flex-1 relative">
         {/* Main Content */}
-        <main className="flex-1 max-w-4xl mx-auto px-4 py-8">
+        <main className="w-full max-w-4xl mx-auto px-4 py-8">
           <div className="space-y-8">
             {/* Hero Section */}
             <div className="text-center space-y-4">
@@ -60,6 +61,8 @@ export default function Home() {
           onDismiss={dismissNotification}
           onMarkAsRead={markAsRead}
           onClearAll={clearAll}
+          isCollapsed={isSidebarCollapsed}
+          onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
         />
       </div>
 
