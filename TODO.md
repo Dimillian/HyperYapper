@@ -23,6 +23,12 @@
 
 ### Post Editor
 - [x] Basic text editor component
+- [x] Syntax highlighting for @mentions and #hashtags (cyberpunk purple glow)
+- [x] Full Mastodon mention format support (@username@instance.domain)
+- [x] Smart mention autocomplete (Mastodon-only, single platform mode)
+- [x] Real-time account search with avatars and display names
+- [x] Keyboard navigation for mention dropdown (arrow keys, Enter, Escape)
+- [x] Proper cursor positioning after mention selection
 - [ ] Rich text formatting (bold, italic, links)
 - [x] Character counter for each platform
 - [ ] Emoji picker integration
@@ -49,11 +55,13 @@
 - [x] Basic posting infrastructure
 - [x] Mastodon posting implementation with image support
 - [x] Threads posting implementation with image support via Cloudflare R2
+- [x] Automatic R2 cleanup after successful Threads posting
 - [x] Success/failure notifications (persistent sidebar system)
 - [x] Cloudflare R2 integration for image hosting
-- [x] Media upload API endpoint
+- [x] Media upload API endpoint with delete functionality
 - [x] Image URL generation for Threads API
 - [x] Mastodon media upload with v2 API and polling
+- [x] Mastodon account search API integration for mentions
 - [x] Proper error handling and user feedback
 - [x] Post status tracking with links to published posts
 - [ ] Queue management system
@@ -65,7 +73,7 @@
 ### Advanced Editor
 - [ ] Thread creation for X and Mastodon
 - [ ] Hashtag suggestions
-- [ ] @mention autocomplete
+- [x] @mention autocomplete (Mastodon only, single-platform mode)
 - [ ] Link preview cards
 - [ ] GIF picker integration
 - [ ] Video upload support

@@ -8,10 +8,12 @@ HyperYapper is a beautiful, cyberpunk-styled cross-posting application that lets
 
 ### 🚀 Current Features
 - **Beautiful Post Editor**: Clean, distraction-free writing experience with modular architecture
+- **Syntax Highlighting**: @mentions and #hashtags glow with cyberpunk purple effects
+- **Smart Mention Autocomplete**: Real-time account search for Mastodon (single-platform mode)
 - **Cross-Platform Posting**: Post to Threads and Mastodon simultaneously (X and BlueSky coming soon)
 - **Platform Optimization**: Automatic formatting and character limits for each platform
 - **Media Support**: Upload images with drag-and-drop, paste, and file selection
-- **Image Hosting**: Cloudflare R2 integration for fast, reliable image hosting
+- **Image Hosting**: Cloudflare R2 integration with automatic cleanup after posting
 - **Smart Notifications**: Persistent notification timeline with post links and status tracking
 - **Dark Theme**: Sleek black interface with neon purple accents and glass morphism
 - **Account Management**: Connect and manage multiple social accounts with OAuth flows
@@ -140,10 +142,13 @@ npm run dev
    - `read` (for account verification)
    - `write:statuses` (for posting content)
    - `write:media` (for uploading images)
+   - `read:search` (for mention autocomplete)
 
 3. **Supported Features**:
    - Public posts up to 500 characters (instance-dependent)
    - Image uploads with media processing
+   - Real-time @mention autocomplete with account search
+   - Full Mastodon mention format (@username@instance.domain)
    - Account verification and connection status
    - Automatic token management
 
@@ -173,7 +178,8 @@ AT Protocol integration is in development.
 ### Mastodon
 - 500+ characters (instance-dependent)
 - Image uploads with polling-based processing
-- Federation support
+- Real-time @mention autocomplete with account search
+- Full federation support (@username@instance.domain)
 - Content warnings
 - Custom emojis
 
@@ -229,14 +235,15 @@ npm run lint
 ```
 src/
 ├── app/                    # Next.js app router
+│   └── api/               # API routes (media upload/delete)
 ├── components/
 │   ├── accountDropdown/    # Account management UI
 │   ├── notifications/      # Notification system
-│   ├── postEditor/        # Post creation interface
+│   ├── postComposer/      # Post creation interface with mention autocomplete
 │   └── *.tsx              # Other components
 ├── lib/
 │   ├── auth/              # OAuth implementations
-│   ├── posting/           # Platform posting logic
+│   ├── posting/           # Platform posting logic with search APIs
 │   └── storage/           # Local storage utilities
 └── types/                 # Shared TypeScript types
 ```
