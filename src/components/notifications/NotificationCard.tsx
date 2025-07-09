@@ -1,4 +1,5 @@
 import { X, CheckCircle, AlertCircle, ExternalLink, Clock } from 'lucide-react'
+import { SiThreads, SiMastodon, SiBluesky } from 'react-icons/si'
 import { Notification } from './types'
 
 interface NotificationCardProps {
@@ -41,6 +42,19 @@ export function NotificationCard({ notification, onDismiss, onMarkAsRead }: Noti
         return 'border-red-500/30 bg-red-900/10'
       default:
         return 'border-blue-500/30 bg-blue-900/10'
+    }
+  }
+
+  const getPlatformIcon = (platform: string) => {
+    switch (platform) {
+      case 'mastodon':
+        return <SiMastodon className="w-3 h-3 text-[#6364FF]" />
+      case 'threads':
+        return <SiThreads className="w-3 h-3 text-white" />
+      case 'bluesky':
+        return <SiBluesky className="w-3 h-3 text-[#00A8E8]" />
+      default:
+        return <CheckCircle className="w-3 h-3 text-green-400" />
     }
   }
 
@@ -95,7 +109,7 @@ export function NotificationCard({ notification, onDismiss, onMarkAsRead }: Noti
             >
               <div className="flex items-center gap-2">
                 {result.success ? (
-                  <CheckCircle className="w-3 h-3 text-green-400" />
+                  getPlatformIcon(result.platform)
                 ) : (
                   <AlertCircle className="w-3 h-3 text-red-400" />
                 )}
