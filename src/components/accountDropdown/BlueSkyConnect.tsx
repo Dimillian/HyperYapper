@@ -20,7 +20,7 @@ export function BlueSkyConnect({
   return (
     <div className="p-3 bg-black/40 rounded-lg border border-purple-400/20 space-y-3">
       <div className="flex items-center justify-between">
-        <h4 className="text-sm font-medium text-purple-100">Connect BlueSky</h4>
+        <h4 className="text-sm font-medium text-purple-100">Connect Bluesky</h4>
         <button
           onClick={onCancel}
           className="text-purple-300 hover:text-purple-100 transition-colors"
@@ -58,7 +58,7 @@ export function BlueSkyConnect({
         ) : (
           <>
             <ExternalLink className="w-3 h-3" />
-            Connect to BlueSky
+            Connect to Bluesky
           </>
         )}
       </button>

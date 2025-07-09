@@ -133,7 +133,7 @@ export function AccountDropdown() {
 
   const handleBlueSkyConnect = async () => {
     if (!state.blueSkyHandle.trim()) {
-      setState(prev => ({ ...prev, error: 'Please enter your BlueSky handle' }))
+      setState(prev => ({ ...prev, error: 'Please enter your Bluesky handle' }))
       return
     }
 
@@ -142,16 +142,16 @@ export function AccountDropdown() {
     try {
       // Only run on client-side
       if (typeof window === 'undefined') {
-        throw new Error('BlueSky authentication requires a browser environment')
+        throw new Error('Bluesky authentication requires a browser environment')
       }
 
       const authUrl = await BlueSkyAuth.initiateLogin(state.blueSkyHandle)
       window.location.href = authUrl
     } catch (err) {
-      console.error('Failed to initiate BlueSky auth:', err)
+      console.error('Failed to initiate Bluesky auth:', err)
       setState(prev => ({ 
         ...prev, 
-        error: err instanceof Error ? err.message : 'Failed to connect to BlueSky',
+        error: err instanceof Error ? err.message : 'Failed to connect to Bluesky',
         isConnecting: false 
       }))
     }
@@ -232,7 +232,7 @@ export function AccountDropdown() {
                 onDisconnect={handleThreadsLogout}
               />
 
-              {/* BlueSky Account */}
+              {/* Bluesky Account */}
               <AccountCard
                 platform="bluesky"
                 isConnected={!!blueSkySession}
@@ -241,7 +241,7 @@ export function AccountDropdown() {
                 onDisconnect={handleBlueSkyLogout}
               />
 
-              {/* BlueSky Connect Form */}
+              {/* Bluesky Connect Form */}
               {state.showBlueSkyConnect && !blueSkySession && (
                 <BlueSkyConnect
                   handle={state.blueSkyHandle}

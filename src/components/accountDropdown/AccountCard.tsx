@@ -16,7 +16,7 @@ const platformConfig = {
     iconShadow: 'drop-shadow-[0_0_4px_rgba(255,255,255,0.6)]'
   },
   bluesky: {
-    name: 'BlueSky',
+    name: 'Bluesky',
     icon: SiBluesky,
     iconColor: 'text-[#00A8E8]',
     iconShadow: 'drop-shadow-[0_0_4px_rgba(0,168,232,0.6)]'

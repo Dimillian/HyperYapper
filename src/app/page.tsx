@@ -72,7 +72,7 @@ export default function Home() {
                 {currentTagline}
               </h2>
               <p className="text-purple-200 text-lg font-medium glow-text">
-                Write once, yap everywhere. Threads, Mastodon, BlueSky.
+                Write once, yap everywhere. Threads, Mastodon, Bluesky.
               </p>
             </div>
 

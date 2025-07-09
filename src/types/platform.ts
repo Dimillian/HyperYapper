@@ -23,7 +23,7 @@ export const PLATFORMS: Platform[] = [
   },
   {
     id: 'bluesky',
-    name: 'BlueSky',
+    name: 'Bluesky',
     limit: 300,
     brandColor: '#00A8E8',
     glowColor: 'rgba(0, 168, 232, 0.6)'
