@@ -12,6 +12,7 @@ import { TextArea } from './TextArea'
 import { ImagePreview } from './ImagePreview'
 import { Toolbar } from './Toolbar'
 import { useNotifications } from '../notifications'
+import { MastodonSession } from '@/types/auth'
 
 export function PostEditor() {
   const [content, setContent] = useState('')
@@ -19,6 +20,7 @@ export function PostEditor() {
   const [isExpanded, setIsExpanded] = useState(false)
   const [connectedPlatforms, setConnectedPlatforms] = useState<string[]>([])
   const [isPosting, setIsPosting] = useState(false)
+  const [mastodonSession, setMastodonSession] = useState<MastodonSession | null>(null)
   
   const { addNotification } = useNotifications()
   
@@ -41,6 +43,10 @@ export function PostEditor() {
     const sessionManager = SessionManager.getInstance()
     const connected = sessionManager.getConnectedPlatforms()
     setConnectedPlatforms(connected)
+    
+    // Get Mastodon session if available
+    const mastodonSession = sessionManager.getMastodonSession()
+    setMastodonSession(mastodonSession)
     
     // Update selected platforms to only include connected ones
     setSelectedPlatforms(prev => {
@@ -193,6 +199,7 @@ export function PostEditor() {
           setIsExpanded={setIsExpanded}
           selectedPlatforms={selectedPlatforms}
           onPaste={handlePaste}
+          mastodonSession={mastodonSession}
         />
 
         {/* Image Previews */}

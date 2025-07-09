@@ -5,16 +5,19 @@ interface SyntaxHighlighterProps {
 
 export function SyntaxHighlighter({ content, className = '' }: SyntaxHighlighterProps) {
   const highlightSyntax = (text: string) => {
-    return text.replace(/([@#]\w+)/g, (match) => {
-      const isHashtag = match.startsWith('#')
-      const isMention = match.startsWith('@')
-      
-      if (isHashtag || isMention) {
+    return text
+      // First, highlight Mastodon mentions: @username@instance.domain
+      .replace(/@[\w\-_.]+@[\w\-_.]+\.[a-zA-Z]{2,}/g, (match) => {
         return `<span class="cyberpunk-text">${match}</span>`
-      }
-      
-      return match
-    })
+      })
+      // Then, highlight regular mentions: @username
+      .replace(/@[\w\-_.]+/g, (match) => {
+        return `<span class="cyberpunk-text">${match}</span>`
+      })
+      // Finally, highlight hashtags: #hashtag
+      .replace(/#[\w\-_.]+/g, (match) => {
+        return `<span class="cyberpunk-text">${match}</span>`
+      })
   }
 
   return (

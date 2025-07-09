@@ -8,6 +8,21 @@ interface MediaAttachment {
   preview_url: string
 }
 
+interface MastodonAccount {
+  id: string
+  username: string
+  acct: string
+  display_name: string
+  avatar: string
+  avatar_static: string
+}
+
+interface MastodonSearchResult {
+  accounts: MastodonAccount[]
+  statuses: any[]
+  hashtags: any[]
+}
+
 export class MastodonPoster {
   static async post(session: MastodonSession, content: string, images?: File[]): Promise<PostResult> {
     try {
@@ -193,5 +208,37 @@ export class MastodonPoster {
 
     console.error('Media processing timeout - max attempts reached')
     return false
+  }
+
+  static async searchAccounts(session: MastodonSession, query: string): Promise<MastodonAccount[]> {
+    if (!query.trim()) return []
+    
+    const instanceUrl = session.instance.startsWith('http') 
+      ? session.instance 
+      : `https://${session.instance}`
+    
+    try {
+      const url = new URL(`${instanceUrl}/api/v1/accounts/search`)
+      url.searchParams.set('q', query)
+      url.searchParams.set('limit', '8')
+      url.searchParams.set('resolve', 'true')
+      
+      const response = await fetch(url.toString(), {
+        headers: {
+          'Authorization': `Bearer ${session.accessToken}`,
+        },
+      })
+      
+      if (!response.ok) {
+        throw new Error(`Search failed: ${response.status}`)
+      }
+      
+      const accounts: MastodonAccount[] = await response.json()
+      return accounts
+      
+    } catch (error) {
+      console.error('Failed to search accounts:', error)
+      return []
+    }
   }
 }

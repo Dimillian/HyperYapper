@@ -1,6 +1,9 @@
 import { RefObject } from 'react'
 import { PLATFORM_LIMITS } from './types'
 import { SyntaxHighlighter } from './SyntaxHighlighter'
+import { MentionDropdown } from './MentionDropdown'
+import { useMentionHandler } from './useMentionHandler'
+import { MastodonSession } from '@/types/auth'
 
 interface TextAreaProps {
   textareaRef: RefObject<HTMLTextAreaElement | null>
@@ -10,6 +13,7 @@ interface TextAreaProps {
   setIsExpanded: (expanded: boolean) => void
   selectedPlatforms: string[]
   onPaste: (e: React.ClipboardEvent) => void
+  mastodonSession: MastodonSession | null
 }
 
 export function TextArea({
@@ -19,7 +23,8 @@ export function TextArea({
   isExpanded,
   setIsExpanded,
   selectedPlatforms,
-  onPaste
+  onPaste,
+  mastodonSession
 }: TextAreaProps) {
   const getCharacterLimit = () => {
     if (selectedPlatforms.length === 0) return 280
@@ -30,16 +35,29 @@ export function TextArea({
   const remaining = currentLimit - content.length
   const isOverLimit = remaining < 0
 
+  const {
+    mentionState,
+    handleInput,
+    handleMentionSelect,
+    closeMentionDropdown,
+    isMastodonOnly
+  } = useMentionHandler(textareaRef, content, setContent, selectedPlatforms)
+
+  const handleContentChange = (newContent: string) => {
+    setContent(newContent)
+    handleInput(newContent)
+  }
+
   return (
     <div className="relative">
       {/* Textarea with background */}
       <textarea
         ref={textareaRef}
         value={content}
-        onChange={(e) => setContent(e.target.value)}
+        onChange={(e) => handleContentChange(e.target.value)}
         onFocus={() => setIsExpanded(true)}
         onPaste={onPaste}
-        placeholder="What's happening? Time to yap..."
+        placeholder={`What's happening? Time to yap...${isMastodonOnly ? ' (@mentions available)' : ''}`}
         className={`w-full bg-black/70 border border-purple-400/40 rounded-lg p-4 placeholder-purple-300/50 resize-none transition-all duration-200 focus:border-purple-300/70 focus:bg-black/80 focus:shadow-[0_0_20px_rgba(168,85,247,0.3)] ${
           isExpanded ? 'h-32' : 'h-20'
         } ${isOverLimit ? 'border-red-400/70 focus:border-red-400/70' : ''}`}
@@ -66,6 +84,16 @@ export function TextArea({
           {remaining}
         </span>
       </div>
+
+      {/* Mention Dropdown */}
+      <MentionDropdown
+        isVisible={mentionState.isVisible}
+        query={mentionState.query}
+        position={mentionState.position}
+        mastodonSession={mastodonSession}
+        onSelect={handleMentionSelect}
+        onClose={closeMentionDropdown}
+      />
     </div>
   )
 }
