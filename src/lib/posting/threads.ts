@@ -14,8 +14,15 @@ export class ThreadsPoster {
   private static readonly BASE_URL = 'https://graph.threads.net'
   private static readonly PUBLISH_DELAY = 5000 // 5 seconds (minimum safe delay)
 
-  static async post(session: ThreadsSession, content: string): Promise<PostResult> {
+  static async post(session: ThreadsSession, content: string, images?: File[]): Promise<PostResult> {
     try {
+      // Note: Threads API requires images to be hosted on a public URL
+      // For now, we'll ignore images and post text only
+      // TODO: Implement image hosting service to support image posts
+      if (images && images.length > 0) {
+        console.warn('Threads API requires hosted image URLs. Images will be ignored.')
+      }
+
       // Step 1: Create media container for text post
       const container = await this.createMediaContainer(
         session.userInfo.id,

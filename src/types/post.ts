@@ -1,6 +1,7 @@
 export interface PostContent {
   text: string
   platforms: string[]
+  images?: File[]
 }
 
 export interface PostResult {

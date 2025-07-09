@@ -92,7 +92,8 @@ export function PostEditor() {
     try {
       const result = await PostService.postToAll({
         text: content.trim(),
-        platforms: selectedPlatforms
+        platforms: selectedPlatforms,
+        images: attachedImages.map(img => img.file)
       })
 
       setPostStatus(result)

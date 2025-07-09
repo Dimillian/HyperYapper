@@ -6,7 +6,7 @@ export class MastodonAuth {
   private static readonly REDIRECT_URI = typeof window !== 'undefined' 
     ? `${window.location.origin}/auth/mastodon/callback`
     : 'http://localhost:3000/auth/mastodon/callback'
-  private static readonly SCOPES = 'read write:statuses'
+  private static readonly SCOPES = 'read write:statuses write:media'
 
   static async registerApp(instance: string): Promise<MastodonApp> {
     const instanceUrl = this.normalizeInstanceUrl(instance)

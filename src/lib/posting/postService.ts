@@ -24,7 +24,7 @@ export class PostService {
                 error: 'Mastodon account not connected'
               }
             } else {
-              result = await MastodonPoster.post(mastodonSession, content.text)
+              result = await MastodonPoster.post(mastodonSession, content.text, content.images)
             }
             break
 
@@ -45,7 +45,7 @@ export class PostService {
                 error: 'Threads account not connected'
               }
             } else {
-              result = await ThreadsPoster.post(threadsSession, content.text)
+              result = await ThreadsPoster.post(threadsSession, content.text, content.images)
             }
             break
 
