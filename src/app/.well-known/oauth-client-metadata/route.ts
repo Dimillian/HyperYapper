@@ -7,15 +7,22 @@ export async function GET(request: NextRequest) {
   let clientMetadata
   
   if (isProduction || host?.includes('hyperyapper.app')) {
-    // Production metadata
+    // Determine the base URL based on the current host
+    const isWww = host?.startsWith('www.')
+    const baseUrl = isWww ? 'https://www.hyperyapper.app' : 'https://hyperyapper.app'
+    
+    // Production metadata - dynamic based on current host
     clientMetadata = {
-      "client_id": "https://hyperyapper.app/.well-known/oauth-client-metadata",
+      "client_id": `${baseUrl}/.well-known/oauth-client-metadata`,
       "client_name": "HyperYapper",
-      "client_uri": "https://hyperyapper.app",
-      "logo_uri": "https://hyperyapper.app/icon.png",
+      "client_uri": baseUrl,
+      "logo_uri": `${baseUrl}/icon.png`,
       "policy_uri": "https://github.com/Dimillian/HyperYapper/blob/main/PRIVACY.md",
       "tos_uri": "https://github.com/Dimillian/HyperYapper/blob/main/TERMS.md",
-      "redirect_uris": ["https://hyperyapper.app/auth/bluesky/callback"],
+      "redirect_uris": [
+        "https://hyperyapper.app/auth/bluesky/callback",
+        "https://www.hyperyapper.app/auth/bluesky/callback"
+      ],
       "scope": "atproto",
       "grant_types": ["authorization_code", "refresh_token"],
       "response_types": ["code"],
