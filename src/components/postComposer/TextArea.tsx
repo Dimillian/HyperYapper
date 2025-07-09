@@ -1,5 +1,6 @@
 import { RefObject } from 'react'
 import { PLATFORM_LIMITS } from './types'
+import { SyntaxHighlighter } from './SyntaxHighlighter'
 
 interface TextAreaProps {
   textareaRef: RefObject<HTMLTextAreaElement | null>
@@ -31,6 +32,7 @@ export function TextArea({
 
   return (
     <div className="relative">
+      {/* Textarea with background */}
       <textarea
         ref={textareaRef}
         value={content}
@@ -38,13 +40,24 @@ export function TextArea({
         onFocus={() => setIsExpanded(true)}
         onPaste={onPaste}
         placeholder="What's happening? Time to yap..."
-        className={`w-full bg-black/70 border border-purple-400/40 rounded-lg p-4 text-purple-100 placeholder-purple-300/50 resize-none transition-all duration-200 focus:border-purple-300/70 focus:bg-black/80 focus:shadow-[0_0_20px_rgba(168,85,247,0.3)] ${
+        className={`w-full bg-black/70 border border-purple-400/40 rounded-lg p-4 placeholder-purple-300/50 resize-none transition-all duration-200 focus:border-purple-300/70 focus:bg-black/80 focus:shadow-[0_0_20px_rgba(168,85,247,0.3)] ${
           isExpanded ? 'h-32' : 'h-20'
         } ${isOverLimit ? 'border-red-400/70 focus:border-red-400/70' : ''}`}
+        style={{ color: 'transparent', caretColor: '#c4b5fd' }}
       />
       
+      {/* Syntax Highlighting Overlay - positioned on top */}
+      <div className="absolute inset-0 pointer-events-none z-10">
+        <SyntaxHighlighter
+          content={content}
+          className={`w-full bg-transparent border border-transparent rounded-lg p-4 text-purple-100 resize-none ${
+            isExpanded ? 'h-32' : 'h-20'
+          } overflow-hidden`}
+        />
+      </div>
+      
       {/* Character Counter */}
-      <div className="absolute bottom-2 right-2 text-sm font-medium">
+      <div className="absolute bottom-2 right-2 text-sm font-medium z-20">
         <span className={`${
           isOverLimit ? 'text-red-300 drop-shadow-[0_0_4px_rgba(239,68,68,0.6)]' : 
           remaining < 20 ? 'text-yellow-300 drop-shadow-[0_0_4px_rgba(251,191,36,0.6)]' : 
