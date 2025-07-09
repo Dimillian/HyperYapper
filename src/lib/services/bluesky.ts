@@ -1,0 +1,239 @@
+'use client'
+
+import { BlueSkyAuth } from '@/lib/auth/bluesky'
+import { BlueSkySession } from '@/types/auth'
+import { Agent, RichText } from '@atproto/api'
+
+export interface BlueSkyPost {
+  text: string
+  createdAt?: string
+}
+
+export interface BlueSkyPostResponse {
+  uri: string
+  cid: string
+}
+
+export class BlueSkyService {
+  private static async getAgent(session: BlueSkySession): Promise<Agent | null> {
+    try {
+      // Get the OAuth client and restore session
+      const client = await BlueSkyAuth.initializeOAuthClient()
+      const oauthSession = await client.restore(session.did)
+      
+      if (!oauthSession) {
+        console.error('Failed to restore OAuth session')
+        return null
+      }
+
+      // Create agent with the OAuth session
+      const agent = new Agent(oauthSession)
+      
+      return agent
+    } catch (error) {
+      console.error('Error creating BlueSky agent:', error)
+      return null
+    }
+  }
+
+  static async createPost(
+    session: BlueSkySession, 
+    post: BlueSkyPost
+  ): Promise<BlueSkyPostResponse | null> {
+    try {
+      const agent = await this.getAgent(session)
+      
+      if (!agent) {
+        throw new Error('Failed to create BlueSky agent')
+      }
+
+      // Create rich text to handle mentions, links, etc.
+      const rt = new RichText({ text: post.text })
+      await rt.detectFacets(agent)
+
+      // Create the post using the Agent
+      const response = await agent.post({
+        text: rt.text,
+        facets: rt.facets,
+        createdAt: post.createdAt || new Date().toISOString(),
+      })
+
+      return {
+        uri: response.uri,
+        cid: response.cid,
+      }
+    } catch (error) {
+      console.error('Error creating BlueSky post:', error)
+      throw error
+    }
+  }
+
+  static async deletePost(
+    session: BlueSkySession,
+    postUri: string
+  ): Promise<boolean> {
+    try {
+      const agent = await this.getAgent(session)
+      
+      if (!agent) {
+        throw new Error('Failed to create BlueSky agent')
+      }
+
+      await agent.deletePost(postUri)
+      return true
+    } catch (error) {
+      console.error('Error deleting BlueSky post:', error)
+      return false
+    }
+  }
+
+  static async getProfile(session: BlueSkySession): Promise<any | null> {
+    try {
+      const agent = await this.getAgent(session)
+      
+      if (!agent) {
+        throw new Error('Failed to create BlueSky agent')
+      }
+
+      const profile = await agent.getProfile({ actor: session.did })
+      return profile.data
+    } catch (error) {
+      console.error('Error getting BlueSky profile:', error)
+      return null
+    }
+  }
+
+  static async uploadImage(
+    session: BlueSkySession,
+    imageFile: File
+  ): Promise<any | null> {
+    try {
+      const agent = await this.getAgent(session)
+      
+      if (!agent) {
+        throw new Error('Failed to create BlueSky agent')
+      }
+
+      // Convert File to Uint8Array
+      const arrayBuffer = await imageFile.arrayBuffer()
+      const uint8Array = new Uint8Array(arrayBuffer)
+
+      // Upload the image using Agent
+      const uploadResponse = await agent.uploadBlob(uint8Array, {
+        encoding: imageFile.type,
+      })
+
+      return uploadResponse.data.blob
+    } catch (error) {
+      console.error('Error uploading image to BlueSky:', error)
+      return null
+    }
+  }
+
+  static async createPostWithImage(
+    session: BlueSkySession,
+    post: BlueSkyPost,
+    imageFile: File,
+    altText?: string
+  ): Promise<BlueSkyPostResponse | null> {
+    try {
+      const agent = await this.getAgent(session)
+      
+      if (!agent) {
+        throw new Error('Failed to create BlueSky agent')
+      }
+
+      // Upload the image first
+      const imageBlob = await this.uploadImage(session, imageFile)
+      
+      if (!imageBlob) {
+        throw new Error('Failed to upload image')
+      }
+
+      // Create rich text
+      const rt = new RichText({ text: post.text })
+      await rt.detectFacets(agent)
+
+      // Create the post with image using Agent
+      const response = await agent.post({
+        text: rt.text,
+        facets: rt.facets,
+        createdAt: post.createdAt || new Date().toISOString(),
+        embed: {
+          $type: 'app.bsky.embed.images',
+          images: [{
+            image: imageBlob,
+            alt: altText || '',
+          }],
+        },
+      })
+
+      return {
+        uri: response.uri,
+        cid: response.cid,
+      }
+    } catch (error) {
+      console.error('Error creating BlueSky post with image:', error)
+      throw error
+    }
+  }
+
+  static async createThread(
+    session: BlueSkySession,
+    posts: BlueSkyPost[]
+  ): Promise<BlueSkyPostResponse[] | null> {
+    try {
+      const agent = await this.getAgent(session)
+      
+      if (!agent) {
+        throw new Error('Failed to create BlueSky agent')
+      }
+
+      const responses: BlueSkyPostResponse[] = []
+      let parentPost: BlueSkyPostResponse | null = null
+
+      for (const post of posts) {
+        // Create rich text
+        const rt = new RichText({ text: post.text })
+        await rt.detectFacets(agent)
+
+        // Build the post object
+        const postData: any = {
+          text: rt.text,
+          facets: rt.facets,
+          createdAt: post.createdAt || new Date().toISOString(),
+        }
+
+        // If this is a reply to the previous post in the thread
+        if (parentPost) {
+          postData.reply = {
+            parent: {
+              uri: parentPost.uri,
+              cid: parentPost.cid,
+            },
+            root: {
+              uri: responses[0].uri, // First post in thread
+              cid: responses[0].cid,
+            },
+          }
+        }
+
+        // Create the post using Agent
+        const response = await agent.post(postData)
+        
+        const postResponse = {
+          uri: response.uri,
+          cid: response.cid,
+        }
+        
+        responses.push(postResponse)
+        parentPost = postResponse
+      }
+
+      return responses
+    } catch (error) {
+      console.error('Error creating BlueSky thread:', error)
+      throw error
+    }
+  }
+}

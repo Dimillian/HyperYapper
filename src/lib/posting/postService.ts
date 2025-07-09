@@ -1,6 +1,7 @@
 import { SessionManager } from '@/lib/storage/sessionStorage'
 import { MastodonPoster } from './mastodon'
 import { ThreadsPoster } from './threads'
+import { BlueSkyPoster } from './bluesky'
 import { PostContent, PostResult, PostStatus } from '@/types/post'
 
 export class PostService {
@@ -50,10 +51,15 @@ export class PostService {
             break
 
           case 'bluesky':
-            result = {
-              platform: 'bluesky',
-              success: false,
-              error: 'BlueSky posting not implemented yet'
+            const blueSkySession = sessionManager.getBlueSkySession()
+            if (!blueSkySession) {
+              result = {
+                platform: 'bluesky',
+                success: false,
+                error: 'BlueSky account not connected'
+              }
+            } else {
+              result = await BlueSkyPoster.post(blueSkySession, content.text, content.images)
             }
             break
 
@@ -107,6 +113,15 @@ export class PostService {
           const threadsSession = sessionManager.getThreadsSession()
           if (threadsSession) {
             connectionStatus[platform] = await ThreadsPoster.verifyConnection(threadsSession)
+          } else {
+            connectionStatus[platform] = false
+          }
+          break
+
+        case 'bluesky':
+          const blueSkySession = sessionManager.getBlueSkySession()
+          if (blueSkySession) {
+            connectionStatus[platform] = await BlueSkyPoster.verifyConnection(blueSkySession)
           } else {
             connectionStatus[platform] = false
           }

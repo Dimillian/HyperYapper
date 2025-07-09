@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
       "redirect_uris": [
         "https://www.hyperyapper.app/auth/bluesky/callback"
       ],
-      "scope": "atproto",
+      "scope": "atproto transition:generic",
       "grant_types": ["authorization_code", "refresh_token"],
       "response_types": ["code"],
       "token_endpoint_auth_method": "none",
@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
       "policy_uri": "https://github.com/Dimillian/HyperYapper/blob/main/PRIVACY.md",
       "tos_uri": "https://github.com/Dimillian/HyperYapper/blob/main/TERMS.md",
       "redirect_uris": ["http://127.0.0.1:3000/auth/bluesky/callback"],
-      "scope": "atproto",
+      "scope": "atproto transition:generic",
       "grant_types": ["authorization_code", "refresh_token"],
       "response_types": ["code"],
       "token_endpoint_auth_method": "none",

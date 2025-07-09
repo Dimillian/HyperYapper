@@ -16,7 +16,6 @@ export class BlueSkyAuth {
       throw new Error('BlueSky OAuth client can only be initialized on the client side')
     }
 
-
     const { BrowserOAuthClient } = await import('@atproto/oauth-client-browser')
     
     // Determine the client setup based on environment
@@ -29,10 +28,10 @@ export class BlueSkyAuth {
         handleResolver: 'https://bsky.social'
       })
     } else {
-      // Use auto-discovery for development (like it was working before)
-      this.oauthClient = new BrowserOAuthClient({
-        handleResolver: 'https://bsky.social',
-        responseMode: 'query'
+      // Use explicit client metadata for development too
+      this.oauthClient = await BrowserOAuthClient.load({
+        clientId: 'http://127.0.0.1:3000/.well-known/oauth-client-metadata',
+        handleResolver: 'https://bsky.social'
       })
     }
 
@@ -44,6 +43,7 @@ export class BlueSkyAuth {
       const client = await this.initializeOAuthClient()
       
       // For BlueSky, we need to resolve the handle to get the PDS URL
+      // The client metadata declares the required scopes
       const authUrl = await client.authorize(handle)
       
       return authUrl.toString()
@@ -64,6 +64,7 @@ export class BlueSkyAuth {
         throw new Error('No session returned from callback')
       }
 
+      
       // Store the OAuth session in the client for future use
       this.oauthClient = client
 

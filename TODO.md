@@ -21,6 +21,7 @@
 - [x] Implemented brand color glows when selected/connected
 - [x] Updated platform indicators with brand colors
 - [x] BlueSky OAuth client metadata and authentication flow
+- [x] BlueSky posting implementation with image support
 
 ### Post Editor
 - [x] Basic text editor component
