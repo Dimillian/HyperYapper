@@ -16,18 +16,19 @@ export class ThreadsPoster {
 
   static async post(session: ThreadsSession, content: string, images?: File[]): Promise<PostResult> {
     try {
-      // Note: Threads API requires images to be hosted on a public URL
-      // For now, we'll ignore images and post text only
-      // TODO: Implement image hosting service to support image posts
+      // Upload images to R2 if provided
+      let imageUrl: string | undefined
       if (images && images.length > 0) {
-        console.warn('Threads API requires hosted image URLs. Images will be ignored.')
+        // Threads supports only 1 image per post, so use the first one
+        imageUrl = await this.uploadImageToR2(images[0])
       }
 
-      // Step 1: Create media container for text post
+      // Step 1: Create media container for text or image post
       const container = await this.createMediaContainer(
         session.userInfo.id,
         session.accessToken,
-        content
+        content,
+        imageUrl
       )
 
       if (!container.id) {
@@ -64,19 +65,21 @@ export class ThreadsPoster {
     userId: string,
     accessToken: string,
     text: string,
-    linkAttachment?: string
+    imageUrl?: string
   ): Promise<ThreadsMediaContainer> {
     const url = new URL(`${this.BASE_URL}/${this.API_VERSION}/${userId}/threads`)
     
     // Build form data
     const formData = new URLSearchParams()
-    formData.append('media_type', 'TEXT')
-    formData.append('text', text)
     formData.append('access_token', accessToken)
+    formData.append('text', text)
     
-    // Add link attachment if provided (for text-only posts)
-    if (linkAttachment) {
-      formData.append('link_attachment', linkAttachment)
+    // Set media type based on whether we have an image
+    if (imageUrl) {
+      formData.append('media_type', 'IMAGE')
+      formData.append('image_url', imageUrl)
+    } else {
+      formData.append('media_type', 'TEXT')
     }
 
     const response = await fetch(url.toString(), {
@@ -146,6 +149,24 @@ export class ThreadsPoster {
 
   private static delay(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms))
+  }
+
+  private static async uploadImageToR2(image: File): Promise<string> {
+    const formData = new FormData()
+    formData.append('file', image)
+
+    const response = await fetch('/api/upload-media', {
+      method: 'POST',
+      body: formData
+    })
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}))
+      throw new Error(errorData.error || 'Failed to upload image')
+    }
+
+    const data = await response.json()
+    return data.url
   }
 
   // Helper to extract first URL from text for auto link preview

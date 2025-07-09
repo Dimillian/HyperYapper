@@ -12,7 +12,7 @@ import { PLATFORMS } from '@/types/platform'
 import { getPlatformIcon } from './utils'
 
 interface ToolbarProps {
-  fileInputRef: RefObject<HTMLInputElement>
+  fileInputRef: RefObject<HTMLInputElement | null>
   selectedPlatforms: string[]
   content: string
   isOverLimit: boolean
@@ -35,6 +35,7 @@ export function Toolbar({
           onClick={() => fileInputRef.current?.click()}
           className="p-2 rounded-lg bg-black/50 border border-purple-400/30 hover:border-purple-300/50 hover:bg-purple-500/10 transition-all duration-200"
         >
+          {/* eslint-disable-next-line jsx-a11y/alt-text */}
           <Image className="w-5 h-5 text-purple-300 hover:text-purple-200" />
         </button>
         <button className="p-2 rounded-lg bg-black/50 border border-purple-400/30 hover:border-purple-300/50 hover:bg-purple-500/10 transition-all duration-200">

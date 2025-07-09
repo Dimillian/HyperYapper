@@ -2,7 +2,7 @@ import { RefObject } from 'react'
 import { PLATFORM_LIMITS } from './types'
 
 interface TextAreaProps {
-  textareaRef: RefObject<HTMLTextAreaElement>
+  textareaRef: RefObject<HTMLTextAreaElement | null>
   content: string
   setContent: (content: string) => void
   isExpanded: boolean
