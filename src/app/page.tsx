@@ -23,7 +23,7 @@ export default function Home() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <HyperYapperIcon 
-                size={28} 
+                size={36} 
                 className="text-purple-300 drop-shadow-[0_0_8px_rgba(168,85,247,0.8)] -mb-1" 
               />
               <h1 className="text-2xl font-bold cyberpunk-text">HyperYapper</h1>
