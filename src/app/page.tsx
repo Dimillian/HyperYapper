@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { PostEditor } from '@/components/postEditor'
+import { PostEditor } from '@/components/postComposer'
 import { AccountDropdown } from '@/components/accountDropdown'
 import Footer from '@/components/Footer'
 import { NotificationSidebar, useNotifications } from '@/components/notifications'
