@@ -8,7 +8,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'HyperYapper ⚡💬',
-  description: 'The ultimate social media posting app for yapping like a crazy motherfucker',
+  description: 'Unleash your inner chaos. Post everywhere at once. Maximum yapping efficiency for social media addicts.',
   icons: {
     icon: '/favicon.svg',
     shortcut: '/favicon.svg',
