@@ -7,12 +7,14 @@ HyperYapper is a beautiful, cyberpunk-styled cross-posting application that lets
 ## ✨ Features
 
 ### 🚀 Current Features
-- **Beautiful Post Editor**: Clean, distraction-free writing experience
-- **Cross-Platform Posting**: Post to X, Threads, Mastodon, and BlueSky at once
-- **Platform Optimization**: Automatic formatting for each platform's requirements
-- **Draft Management**: Never lose a post with auto-save functionality
-- **Dark Theme**: Sleek black interface with neon purple accents
-- **Account Management**: Connect and manage multiple social accounts
+- **Beautiful Post Editor**: Clean, distraction-free writing experience with modular architecture
+- **Cross-Platform Posting**: Post to Threads and Mastodon simultaneously (X and BlueSky coming soon)
+- **Platform Optimization**: Automatic formatting and character limits for each platform
+- **Media Support**: Upload images with drag-and-drop, paste, and file selection
+- **Image Hosting**: Cloudflare R2 integration for fast, reliable image hosting
+- **Smart Notifications**: Persistent notification timeline with post links and status tracking
+- **Dark Theme**: Sleek black interface with neon purple accents and glass morphism
+- **Account Management**: Connect and manage multiple social accounts with OAuth flows
 
 ### 🤖 AI-Powered Features (Coming Soon)
 - **Post Enhancement**: AI suggestions to make your posts more engaging
@@ -52,12 +54,13 @@ HyperYapper is a beautiful, cyberpunk-styled cross-posting application that lets
 
 - **Framework**: Next.js 15 with TypeScript
 - **Styling**: Tailwind CSS with custom cyberpunk theme
-- **Icons**: Lucide React
-- **Rich Text**: Lexical/Slate editor
-- **Animations**: Framer Motion
-- **AI**: OpenAI API integration
-- **Storage**: Local storage with cloud sync
-- **Analytics**: Built-in tracking system
+- **Icons**: Lucide React + React Icons (for brand icons)
+- **State Management**: React Context API
+- **Media Storage**: Cloudflare R2 with AWS SDK
+- **Authentication**: OAuth 2.0 flows for each platform
+- **Storage**: localStorage with proper SSR hydration
+- **Notifications**: Persistent timeline with dismissible cards
+- **Build**: TypeScript strict mode with ESLint
 
 ## 🚀 Getting Started
 
@@ -71,7 +74,7 @@ npm install
 
 # Set up environment variables
 cp .env.example .env.local
-# Add your social media API keys (see Setup section below)
+# Add your social media API keys and Cloudflare R2 credentials (see Setup section below)
 
 # Start development server
 npm run dev
@@ -80,6 +83,28 @@ npm run dev
 ```
 
 ## ⚙️ Platform Setup
+
+### Cloudflare R2 (Required for Image Support)
+
+1. **Create Cloudflare R2 Bucket**:
+   - Go to [Cloudflare Dashboard](https://dash.cloudflare.com/)
+   - Create R2 bucket (e.g., `hyperyapper-media`)
+   - Enable public access and note the public URL
+
+2. **Generate API Credentials**:
+   - Go to **R2 Object Storage** → **Manage R2 API tokens**
+   - Create API token with Object Read and Write permissions
+   - Copy Account ID, Access Key ID, and Secret Access Key
+
+3. **Configure Environment Variables**:
+   ```bash
+   # In your .env.local file
+   CLOUDFLARE_R2_ACCOUNT_ID=your_account_id
+   CLOUDFLARE_R2_ACCESS_KEY_ID=your_access_key
+   CLOUDFLARE_R2_SECRET_ACCESS_KEY=your_secret_key
+   CLOUDFLARE_R2_BUCKET_NAME=hyperyapper-media
+   CLOUDFLARE_R2_PUBLIC_URL=https://your-bucket.your-domain.com
+   ```
 
 ### Threads (Meta)
 
@@ -111,8 +136,14 @@ npm run dev
    - Users enter their instance URL (e.g., `mastodon.social`)
    - OAuth flow handles app registration automatically
 
-2. **Supported Features**:
+2. **Required Scopes**:
+   - `read` (for account verification)
+   - `write:statuses` (for posting content)
+   - `write:media` (for uploading images)
+
+3. **Supported Features**:
    - Public posts up to 500 characters (instance-dependent)
+   - Image uploads with media processing
    - Account verification and connection status
    - Automatic token management
 
@@ -123,7 +154,6 @@ API access restrictions have made integration challenging. We're exploring alter
 ### BlueSky - Coming Soon
 
 AT Protocol integration is in development.
-```
 
 ## 📱 Platform Support
 
@@ -135,12 +165,14 @@ AT Protocol integration is in development.
 
 ### Threads
 - 500 character posts
+- Single image per post (via Cloudflare R2)
 - Instagram integration
-- Multiple images
 - Link sharing
+- Profile links in success notifications
 
 ### Mastodon
 - 500+ characters (instance-dependent)
+- Image uploads with polling-based processing
 - Federation support
 - Content warnings
 - Custom emojis
@@ -155,11 +187,13 @@ AT Protocol integration is in development.
 
 HyperYapper embraces a cyberpunk aesthetic with:
 - Pure black backgrounds for OLED displays
-- Neon purple accents (#8B5CF6, #A855F7)
-- Glass morphism effects
-- Smooth animations
-- Mobile-first responsive design
-- Accessibility-first approach
+- Neon purple accents (#8B5CF6, #A855F7) with glow effects
+- Glass morphism effects with backdrop blur
+- Smooth animations and transitions
+- Mobile-first responsive design with 44px touch targets
+- Accessibility-first approach with proper contrast
+- Persistent notification sidebar for activity tracking
+- Modular component architecture for maintainability
 
 ## 🤝 Contributing
 
@@ -171,6 +205,41 @@ We welcome contributions! Whether it's:
 - 🌐 Platform integrations
 
 Check out our [TODO.md](./TODO.md) for current priorities and planned features.
+
+### Development Setup
+
+```bash
+# Install dependencies
+npm install
+
+# Set up environment variables (see Platform Setup section)
+cp .env.example .env.local
+
+# Run development server
+npm run dev
+
+# Build and type check
+npm run build
+npm run typecheck
+npm run lint
+```
+
+### Project Structure
+
+```
+src/
+├── app/                    # Next.js app router
+├── components/
+│   ├── accountDropdown/    # Account management UI
+│   ├── notifications/      # Notification system
+│   ├── postEditor/        # Post creation interface
+│   └── *.tsx              # Other components
+├── lib/
+│   ├── auth/              # OAuth implementations
+│   ├── posting/           # Platform posting logic
+│   └── storage/           # Local storage utilities
+└── types/                 # Shared TypeScript types
+```
 
 ## 📄 License
 

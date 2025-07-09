@@ -1,8 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { PostEditor } from '@/components/PostEditor'
-import { AccountDropdown } from '@/components/AccountDropdown'
+import { PostEditor } from '@/components/postEditor'
+import { AccountDropdown } from '@/components/accountDropdown'
 import Footer from '@/components/Footer'
 import { NotificationSidebar, useNotifications } from '@/components/notifications'
 import { Zap, MessageCircle } from 'lucide-react'
