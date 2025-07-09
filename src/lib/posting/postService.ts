@@ -29,13 +29,6 @@ export class PostService {
             }
             break
 
-          case 'twitter':
-            result = {
-              platform: 'twitter',
-              success: false,
-              error: 'Twitter posting not implemented yet'
-            }
-            break
 
           case 'threads':
             const threadsSession = sessionManager.getThreadsSession()

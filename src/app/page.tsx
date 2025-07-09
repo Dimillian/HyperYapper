@@ -1,12 +1,30 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { PostEditor } from '@/components/postComposer'
 import { AccountDropdown } from '@/components/accountDropdown'
 import Footer from '@/components/Footer'
 import { NotificationSidebar, useNotifications } from '@/components/notifications'
 import { useOAuthCallback } from '@/hooks/useOAuthCallback'
 import { HyperYapperIcon } from '@/components/icons/HyperYapperIcon'
+
+const TAGLINES = [
+  "Cross-Post Like a Legend",
+  "Yap Across the Multiverse",
+  "One Post to Rule Them All",
+  "Maximum Yapping Efficiency",
+  "Social Media Speed Runner",
+  "Professional Yapper Tools",
+  "Chaos Coordinator for Your Posts",
+  "The Yapping Olympics Champion",
+  "Multi-Platform Mayhem Maker",
+  "Your Posts, Everywhere, All at Once",
+  "Broadcast Your Brilliance",
+  "Triple Threat Posting",
+  "Social Media Speedrun Mode",
+  "The Ultimate Yap Machine",
+  "Omnipresent Posting Power"
+]
 
 export default function Home() {
   const { notifications, dismissNotification, markAsRead, clearAll } = useNotifications()
@@ -30,9 +48,6 @@ export default function Home() {
             </div>
             
             <div className="flex items-center gap-4">
-              <div className="hidden sm:block text-sm glow-text font-medium">
-                Ready to yap like a pro? ⚡
-              </div>
               <AccountDropdown />
             </div>
           </div>
@@ -50,7 +65,7 @@ export default function Home() {
                 Cross-Post Like a Legend
               </h2>
               <p className="text-purple-200 text-lg font-medium glow-text">
-                Write once, yap everywhere. X, Threads, Mastodon, BlueSky.
+                Write once, yap everywhere. Threads, Mastodon, BlueSky.
               </p>
             </div>
 

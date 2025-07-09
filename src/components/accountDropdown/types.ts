@@ -9,7 +9,7 @@ export interface AccountDropdownState {
 }
 
 export interface AccountCardProps {
-  platform: 'mastodon' | 'threads' | 'x' | 'bluesky'
+  platform: 'mastodon' | 'threads' | 'bluesky'
   isConnected: boolean
   session?: any
   onConnect: () => void

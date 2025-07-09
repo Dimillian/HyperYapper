@@ -232,35 +232,26 @@ export function AccountDropdown() {
                 onDisconnect={handleThreadsLogout}
               />
 
-              {/* Coming Soon Platforms */}
-              <div className="space-y-2">
-                <AccountCard
-                  platform="x"
-                  isConnected={false}
-                  onConnect={() => {}}
-                  onDisconnect={() => {}}
-                />
-                
-                <AccountCard
-                  platform="bluesky"
-                  isConnected={!!blueSkySession}
-                  session={blueSkySession}
-                  onConnect={() => setState(prev => ({ ...prev, showBlueSkyConnect: !prev.showBlueSkyConnect }))}
-                  onDisconnect={handleBlueSkyLogout}
-                />
+              {/* BlueSky Account */}
+              <AccountCard
+                platform="bluesky"
+                isConnected={!!blueSkySession}
+                session={blueSkySession}
+                onConnect={() => setState(prev => ({ ...prev, showBlueSkyConnect: !prev.showBlueSkyConnect }))}
+                onDisconnect={handleBlueSkyLogout}
+              />
 
-                {/* BlueSky Connect Form */}
-                {state.showBlueSkyConnect && !blueSkySession && (
-                  <BlueSkyConnect
-                    handle={state.blueSkyHandle}
-                    onHandleChange={(handle) => setState(prev => ({ ...prev, blueSkyHandle: handle }))}
-                    onConnect={handleBlueSkyConnect}
-                    onCancel={() => setState(prev => ({ ...prev, showBlueSkyConnect: false }))}
-                    isConnecting={state.isConnecting}
-                    error={state.error}
-                  />
-                )}
-              </div>
+              {/* BlueSky Connect Form */}
+              {state.showBlueSkyConnect && !blueSkySession && (
+                <BlueSkyConnect
+                  handle={state.blueSkyHandle}
+                  onHandleChange={(handle) => setState(prev => ({ ...prev, blueSkyHandle: handle }))}
+                  onConnect={handleBlueSkyConnect}
+                  onCancel={() => setState(prev => ({ ...prev, showBlueSkyConnect: false }))}
+                  isConnecting={state.isConnecting}
+                  error={state.error}
+                />
+              )}
             </div>
           </div>
         </div>

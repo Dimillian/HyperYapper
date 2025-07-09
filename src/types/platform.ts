@@ -8,13 +8,6 @@ export interface Platform {
 
 export const PLATFORMS: Platform[] = [
   {
-    id: 'twitter',
-    name: 'X',
-    limit: 280,
-    brandColor: '#1DA1F2',
-    glowColor: 'rgba(29, 161, 242, 0.6)'
-  },
-  {
     id: 'threads',
     name: 'Threads',
     limit: 500,
