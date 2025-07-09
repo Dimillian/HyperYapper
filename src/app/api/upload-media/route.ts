@@ -43,10 +43,10 @@ export async function POST(request: NextRequest) {
 
     await s3Client.send(command)
 
-    // Return public URL
+    // Return public URL and key for later deletion
     const publicUrl = `${process.env.CLOUDFLARE_R2_PUBLIC_URL}/${key}`
     
-    return NextResponse.json({ url: publicUrl })
+    return NextResponse.json({ url: publicUrl, key })
   } catch (error) {
     console.error('Upload error:', error)
     return NextResponse.json(

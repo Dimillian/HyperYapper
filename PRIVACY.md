@@ -37,7 +37,7 @@ When you connect social media accounts:
 ### Data Transmission
 - OAuth authentication flows occur directly between your browser and social media platforms
 - Posted content is transmitted directly from your browser to the respective social media platforms
-- **Media Storage for Threads**: Images posted to Threads are temporarily stored on Cloudflare R2 (our media hosting service) because Threads requires publicly accessible URLs for media attachments. These images are automatically deleted after posting and are not accessed, analyzed, or stored permanently by us.
+- **Media Storage for Threads**: Images posted to Threads are temporarily stored on Cloudflare R2 (our media hosting service) because Threads requires publicly accessible URLs for media attachments. These images are automatically deleted immediately after successful posting and are not accessed, analyzed, or stored permanently by us.
 
 ## Your Rights and Control
 
@@ -62,7 +62,7 @@ When you connect social media accounts:
 ### Media Storage Security
 - **Cloudflare R2**: Images for Threads are temporarily stored on Cloudflare R2, a secure cloud storage service
 - Images are uploaded with unique, non-guessable filenames to prevent unauthorized access
-- Media files are automatically deleted after successful posting to maintain privacy
+- Media files are automatically deleted immediately after successful posting to maintain privacy
 - All uploads use encrypted connections (HTTPS)
 
 ### Platform Security
@@ -88,6 +88,6 @@ If you have questions about this Privacy Policy, please:
 - ✅ No data collection or mining
 - ✅ Automatic media deletion after posting
 
-**Note on Threads Media**: The only exception to our no-server-storage policy is temporary image hosting for Threads posts. This is required because Threads needs publicly accessible URLs for media attachments. Images are automatically deleted after posting and are never analyzed or stored permanently.
+**Note on Threads Media**: The only exception to our no-server-storage policy is temporary image hosting for Threads posts. This is required because Threads needs publicly accessible URLs for media attachments. Images are automatically deleted immediately after successful posting and are never analyzed or stored permanently.
 
 Your privacy is not a feature we added – it's the foundation of how HyperYapper was built.

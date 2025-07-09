@@ -15,12 +15,16 @@ export class ThreadsPoster {
   private static readonly PUBLISH_DELAY = 5000 // 5 seconds (minimum safe delay)
 
   static async post(session: ThreadsSession, content: string, images?: File[]): Promise<PostResult> {
+    let imageUrl: string | undefined
+    let imageKey: string | undefined
+    
     try {
       // Upload images to R2 if provided
-      let imageUrl: string | undefined
       if (images && images.length > 0) {
         // Threads supports only 1 image per post, so use the first one
-        imageUrl = await this.uploadImageToR2(images[0])
+        const uploadResult = await this.uploadImageToR2(images[0])
+        imageUrl = uploadResult.url
+        imageKey = uploadResult.key
       }
 
       // Step 1: Create media container for text or image post
@@ -45,6 +49,16 @@ export class ThreadsPoster {
         container.id
       )
 
+      // Step 4: Clean up - delete the image from R2 after successful posting
+      if (imageKey) {
+        try {
+          await this.deleteImageFromR2(imageKey)
+        } catch (deleteError) {
+          console.warn('Failed to delete image from R2:', deleteError)
+          // Don't fail the post if cleanup fails
+        }
+      }
+
       return {
         platform: 'threads',
         success: true,
@@ -54,6 +68,15 @@ export class ThreadsPoster {
         postUrl: `https://www.threads.com/@${session.userInfo.username}`
       }
     } catch (error) {
+      // Clean up image on error too
+      if (imageKey) {
+        try {
+          await this.deleteImageFromR2(imageKey)
+        } catch (deleteError) {
+          console.warn('Failed to delete image from R2 during error cleanup:', deleteError)
+        }
+      }
+      
       console.error('Threads posting error:', error)
       return {
         platform: 'threads',
@@ -153,7 +176,7 @@ export class ThreadsPoster {
     return new Promise(resolve => setTimeout(resolve, ms))
   }
 
-  private static async uploadImageToR2(image: File): Promise<string> {
+  private static async uploadImageToR2(image: File): Promise<{ url: string; key: string }> {
     const formData = new FormData()
     formData.append('file', image)
 
@@ -168,7 +191,22 @@ export class ThreadsPoster {
     }
 
     const data = await response.json()
-    return data.url
+    return { url: data.url, key: data.key }
+  }
+
+  private static async deleteImageFromR2(key: string): Promise<void> {
+    const response = await fetch('/api/delete-media', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ key })
+    })
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}))
+      throw new Error(errorData.error || 'Failed to delete image')
+    }
   }
 
   // Helper to extract first URL from text for auto link preview
