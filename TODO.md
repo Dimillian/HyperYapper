@@ -20,6 +20,7 @@
 - [x] Added proper brand icons (X, Threads, Mastodon, BlueSky)
 - [x] Implemented brand color glows when selected/connected
 - [x] Updated platform indicators with brand colors
+- [x] BlueSky OAuth client metadata and authentication flow
 
 ### Post Editor
 - [x] Basic text editor component
@@ -44,7 +45,7 @@
 - [ ] OAuth flow for X (Twitter)
 - [x] OAuth flow for Threads
 - [x] OAuth flow for Mastodon
-- [ ] OAuth flow for BlueSky
+- [x] OAuth flow for BlueSky (AT Protocol with DPoP and PKCE)
 - [x] Account switcher component
 - [x] Connection status indicators
 

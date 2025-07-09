@@ -25,15 +25,15 @@ const platformConfig = {
   bluesky: {
     name: 'BlueSky',
     icon: SiBluesky,
-    iconColor: 'text-gray-400',
-    iconShadow: ''
+    iconColor: 'text-[#00A8E8]',
+    iconShadow: 'drop-shadow-[0_0_4px_rgba(0,168,232,0.6)]'
   }
 }
 
 export function AccountCard({ platform, isConnected, session, onConnect, onDisconnect }: AccountCardProps) {
   const config = platformConfig[platform]
   const Icon = config.icon
-  const isComingSoon = platform === 'x' || platform === 'bluesky'
+  const isComingSoon = platform === 'x'
 
   const getUserInfo = () => {
     if (!session) return null
@@ -51,6 +51,14 @@ export function AccountCard({ platform, isConnected, session, onConnect, onDisco
         username: `@${session.userInfo.username}`,
         avatar: session.userInfo.profilePictureUrl,
         displayName: session.userInfo.name
+      }
+    }
+    
+    if (platform === 'bluesky') {
+      return {
+        username: `@${session.handle}`,
+        avatar: null, // BlueSky profile data would need to be fetched separately
+        displayName: session.handle
       }
     }
     

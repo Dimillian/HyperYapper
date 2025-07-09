@@ -1,15 +1,43 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { PostEditor } from '@/components/postComposer'
 import { AccountDropdown } from '@/components/accountDropdown'
 import Footer from '@/components/Footer'
 import { NotificationSidebar, useNotifications } from '@/components/notifications'
+import { BlueSkyAuth } from '@/lib/auth/bluesky'
 import { Zap, MessageCircle } from 'lucide-react'
 
 export default function Home() {
   const { notifications, dismissNotification, markAsRead, clearAll } = useNotifications()
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
+  
+  useEffect(() => {
+    // Handle OAuth callback parameters
+    const handleOAuthCallback = async () => {
+      const urlParams = new URLSearchParams(window.location.search)
+      const code = urlParams.get('code')
+      const state = urlParams.get('state')
+      const iss = urlParams.get('iss')
+      
+      // Check if this is a BlueSky OAuth callback
+      if (code && state && iss === 'https://bsky.social') {
+        try {
+          const session = await BlueSkyAuth.handleCallback(urlParams)
+          if (session) {
+            // Clean up the URL
+            window.history.replaceState({}, document.title, window.location.pathname)
+            // Trigger session change event
+            window.dispatchEvent(new CustomEvent('sessionChanged'))
+          }
+        } catch (error) {
+          console.error('Error handling BlueSky callback:', error)
+        }
+      }
+    }
+    
+    handleOAuthCallback()
+  }, [])
   
   return (
     <div className="min-h-screen bg-black flex flex-col">

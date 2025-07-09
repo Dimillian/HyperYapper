@@ -3,11 +3,13 @@
 import { useState, useEffect, useRef } from 'react'
 import { MastodonAuth } from '@/lib/auth/mastodon'
 import { ThreadsAuth } from '@/lib/auth/threads'
+import { BlueSkyAuth } from '@/lib/auth/bluesky'
 import { SessionManager } from '@/lib/storage/sessionStorage'
-import { MastodonSession, ThreadsSession } from '@/types/auth'
+import { MastodonSession, ThreadsSession, BlueSkySession } from '@/types/auth'
 import { User, ChevronDown } from 'lucide-react'
 import { AccountCard } from './AccountCard'
 import { MastodonConnect } from './MastodonConnect'
+import { BlueSkyConnect } from './BlueSkyConnect'
 import { AccountDropdownState } from './types'
 
 export function AccountDropdown() {
@@ -15,12 +17,15 @@ export function AccountDropdown() {
     isOpen: false,
     showMastodonConnect: false,
     mastodonInstance: '',
+    showBlueSkyConnect: false,
+    blueSkyHandle: '',
     isConnecting: false,
     error: ''
   })
   
   const [mastodonSession, setMastodonSession] = useState<MastodonSession | null>(null)
   const [threadsSession, setThreadsSession] = useState<ThreadsSession | null>(null)
+  const [blueSkySession, setBlueSkySession] = useState<BlueSkySession | null>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -29,8 +34,10 @@ export function AccountDropdown() {
       const sessionManager = SessionManager.getInstance()
       const mastodonSession = sessionManager.getMastodonSession()
       const threadsSession = sessionManager.getThreadsSession()
+      const blueSkySession = sessionManager.getBlueSkySession()
       setMastodonSession(mastodonSession)
       setThreadsSession(threadsSession)
+      setBlueSkySession(blueSkySession)
     }
 
     refreshSessions()
@@ -48,7 +55,7 @@ export function AccountDropdown() {
     // Close dropdown when clicking outside
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setState(prev => ({ ...prev, isOpen: false, showMastodonConnect: false }))
+        setState(prev => ({ ...prev, isOpen: false, showMastodonConnect: false, showBlueSkyConnect: false }))
       }
     }
 
@@ -124,7 +131,41 @@ export function AccountDropdown() {
     window.dispatchEvent(new CustomEvent('sessionChanged'))
   }
 
-  const connectedCount = (mastodonSession ? 1 : 0) + (threadsSession ? 1 : 0)
+  const handleBlueSkyConnect = async () => {
+    if (!state.blueSkyHandle.trim()) {
+      setState(prev => ({ ...prev, error: 'Please enter your BlueSky handle' }))
+      return
+    }
+
+    setState(prev => ({ ...prev, isConnecting: true, error: '' }))
+
+    try {
+      // Only run on client-side
+      if (typeof window === 'undefined') {
+        throw new Error('BlueSky authentication requires a browser environment')
+      }
+
+      const authUrl = await BlueSkyAuth.initiateLogin(state.blueSkyHandle)
+      window.location.href = authUrl
+    } catch (err) {
+      console.error('Failed to initiate BlueSky auth:', err)
+      setState(prev => ({ 
+        ...prev, 
+        error: err instanceof Error ? err.message : 'Failed to connect to BlueSky',
+        isConnecting: false 
+      }))
+    }
+  }
+
+  const handleBlueSkyLogout = () => {
+    const sessionManager = SessionManager.getInstance()
+    sessionManager.removeBlueSkySession()
+    setBlueSkySession(null)
+    setState(prev => ({ ...prev, isOpen: false }))
+    window.dispatchEvent(new CustomEvent('sessionChanged'))
+  }
+
+  const connectedCount = (mastodonSession ? 1 : 0) + (threadsSession ? 1 : 0) + (blueSkySession ? 1 : 0)
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -202,10 +243,23 @@ export function AccountDropdown() {
                 
                 <AccountCard
                   platform="bluesky"
-                  isConnected={false}
-                  onConnect={() => {}}
-                  onDisconnect={() => {}}
+                  isConnected={!!blueSkySession}
+                  session={blueSkySession}
+                  onConnect={() => setState(prev => ({ ...prev, showBlueSkyConnect: !prev.showBlueSkyConnect }))}
+                  onDisconnect={handleBlueSkyLogout}
                 />
+
+                {/* BlueSky Connect Form */}
+                {state.showBlueSkyConnect && !blueSkySession && (
+                  <BlueSkyConnect
+                    handle={state.blueSkyHandle}
+                    onHandleChange={(handle) => setState(prev => ({ ...prev, blueSkyHandle: handle }))}
+                    onConnect={handleBlueSkyConnect}
+                    onCancel={() => setState(prev => ({ ...prev, showBlueSkyConnect: false }))}
+                    isConnecting={state.isConnecting}
+                    error={state.error}
+                  />
+                )}
               </div>
             </div>
           </div>

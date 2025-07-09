@@ -17,7 +17,7 @@ interface MastodonAccount {
 }
 
 export function useMentionHandler(
-  textareaRef: RefObject<HTMLTextAreaElement>,
+  textareaRef: RefObject<HTMLTextAreaElement | null>,
   content: string,
   setContent: (content: string) => void,
   selectedPlatforms: string[]

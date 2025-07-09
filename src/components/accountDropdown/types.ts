@@ -2,6 +2,8 @@ export interface AccountDropdownState {
   isOpen: boolean
   showMastodonConnect: boolean
   mastodonInstance: string
+  showBlueSkyConnect: boolean
+  blueSkyHandle: string
   isConnecting: boolean
   error: string
 }

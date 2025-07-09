@@ -1,4 +1,4 @@
-import { SessionStorage, MastodonSession, ThreadsSession } from '@/types/auth'
+import { SessionStorage, MastodonSession, ThreadsSession, BlueSkySession } from '@/types/auth'
 
 const STORAGE_KEY = 'hyperyapper_sessions'
 
@@ -141,6 +141,21 @@ export class SessionManager {
     }
   }
 
+  // BlueSky session methods
+  setBlueSkySession(session: BlueSkySession): void {
+    this.sessions.bluesky = session
+    this.saveSessions()
+  }
+
+  getBlueSkySession(): BlueSkySession | null {
+    return this.sessions.bluesky || null
+  }
+
+  removeBlueSkySession(): void {
+    delete this.sessions.bluesky
+    this.saveSessions()
+  }
+
   // General methods
   getAllSessions(): SessionStorage {
     return { ...this.sessions }
@@ -174,6 +189,10 @@ export class SessionManager {
         if (!threadsSession) return false
         const expiresAt = threadsSession.createdAt + (threadsSession.expiresIn * 1000)
         return expiresAt > now
+      
+      case 'bluesky':
+        const blueSkySession = this.sessions.bluesky
+        return blueSkySession ? blueSkySession.active : false
       
       default:
         return false

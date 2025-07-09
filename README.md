@@ -10,7 +10,7 @@ HyperYapper is a beautiful, cyberpunk-styled cross-posting application that lets
 - **Beautiful Post Editor**: Clean, distraction-free writing experience with modular architecture
 - **Syntax Highlighting**: @mentions and #hashtags glow with cyberpunk purple effects
 - **Smart Mention Autocomplete**: Real-time account search for Mastodon (single-platform mode)
-- **Cross-Platform Posting**: Post to Threads and Mastodon simultaneously (X and BlueSky coming soon)
+- **Cross-Platform Posting**: Post to Threads and Mastodon simultaneously (X and BlueSky auth ready, posting coming soon)
 - **Platform Optimization**: Automatic formatting and character limits for each platform
 - **Media Support**: Upload images with drag-and-drop, paste, and file selection
 - **Image Hosting**: Cloudflare R2 integration with automatic cleanup after posting
@@ -60,6 +60,7 @@ HyperYapper is a beautiful, cyberpunk-styled cross-posting application that lets
 - **State Management**: React Context API
 - **Media Storage**: Cloudflare R2 with AWS SDK
 - **Authentication**: OAuth 2.0 flows for each platform
+- **AT Protocol**: BlueSky OAuth with DPoP and PKCE support
 - **Storage**: localStorage with proper SSR hydration
 - **Notifications**: Persistent timeline with dismissible cards
 - **Build**: TypeScript strict mode with ESLint
@@ -156,9 +157,27 @@ npm run dev
 
 API access restrictions have made integration challenging. We're exploring alternative approaches.
 
-### BlueSky - Coming Soon
+### BlueSky
 
-AT Protocol integration is in development.
+1. **OAuth Client Metadata**:
+   - HyperYapper publishes client metadata at `/.well-known/oauth-client-metadata`
+   - Uses AT Protocol OAuth 2.0 with DPoP and PKCE for security
+   - No developer portal setup required
+
+2. **Authentication Flow**:
+   - Users enter their BlueSky handle (e.g., `alice.bsky.social`)
+   - OAuth flow handles authorization automatically
+   - Supports both production and development environments
+
+3. **Required Features**:
+   - DPoP (Demonstrating Proof of Possession) for token binding
+   - PKCE (Proof Key for Code Exchange) for security
+   - Dynamic client registration via metadata document
+
+4. **Session Management**:
+   - OAuth client handles token refresh automatically
+   - Session persistence with proper SSR hydration
+   - Account verification and connection status
 
 ## 📱 Platform Support
 
@@ -185,9 +204,10 @@ AT Protocol integration is in development.
 
 ### BlueSky
 - 300 character posts
-- AT Protocol support
-- Decentralized features
-- Custom feeds
+- AT Protocol OAuth 2.0 authentication with DPoP and PKCE
+- Decentralized features with handle-based identity
+- Custom feeds and federated timeline
+- OAuth client metadata for seamless authorization
 
 ## 🎨 Design Philosophy
 
@@ -237,12 +257,12 @@ src/
 ├── app/                    # Next.js app router
 │   └── api/               # API routes (media upload/delete)
 ├── components/
-│   ├── accountDropdown/    # Account management UI
+│   ├── accountDropdown/    # Account management UI with BlueSky support
 │   ├── notifications/      # Notification system
 │   ├── postComposer/      # Post creation interface with mention autocomplete
 │   └── *.tsx              # Other components
 ├── lib/
-│   ├── auth/              # OAuth implementations
+│   ├── auth/              # OAuth implementations (Mastodon, Threads, BlueSky)
 │   ├── posting/           # Platform posting logic with search APIs
 │   └── storage/           # Local storage utilities
 └── types/                 # Shared TypeScript types

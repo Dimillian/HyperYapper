@@ -25,11 +25,20 @@ export interface ThreadsUserInfo {
   biography?: string
 }
 
+export interface BlueSkySession {
+  did: string
+  handle: string
+  email?: string
+  accessJwt: string
+  refreshJwt: string
+  active: boolean
+}
+
 export interface SessionStorage {
   mastodon?: MastodonSession
   twitter?: any // TODO: implement later
   threads?: ThreadsSession
-  bluesky?: any // TODO: implement later
+  bluesky?: BlueSkySession
 }
 
 export interface MastodonApp {
