@@ -24,6 +24,15 @@ export default function Footer() {
             >
               View Source
             </a>
+            <span className="text-purple-300">•</span>
+            <a 
+              href="https://github.com/Dimillian/HyperYapper/blob/main/PRIVACY.md" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-purple-300 hover:text-purple-200 transition-colors duration-200 glow-text font-medium"
+            >
+              Privacy Policy
+            </a>
           </div>
         </div>
       </div>
