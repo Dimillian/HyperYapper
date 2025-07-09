@@ -41,7 +41,6 @@ export function AccountCard({ platform, isConnected, session, onConnect, onDisco
     if (platform === 'mastodon') {
       return {
         username: `@${session.username}@${new URL(session.instance).hostname}`,
-        avatar: session.avatar,
         displayName: session.displayName
       }
     }
@@ -49,7 +48,6 @@ export function AccountCard({ platform, isConnected, session, onConnect, onDisco
     if (platform === 'threads') {
       return {
         username: `@${session.userInfo.username}`,
-        avatar: session.userInfo.profilePictureUrl,
         displayName: session.userInfo.name
       }
     }
@@ -57,7 +55,6 @@ export function AccountCard({ platform, isConnected, session, onConnect, onDisco
     if (platform === 'bluesky') {
       return {
         username: `@${session.handle}`,
-        avatar: null, // BlueSky profile data would need to be fetched separately
         displayName: session.handle
       }
     }
@@ -89,22 +86,13 @@ export function AccountCard({ platform, isConnected, session, onConnect, onDisco
       </div>
 
       {isConnected ? (
-        <div className="flex items-center gap-2">
-          {userInfo?.avatar && (
-            <img 
-              src={userInfo.avatar} 
-              alt={userInfo.displayName}
-              className="w-6 h-6 rounded-full border border-purple-300/40"
-            />
-          )}
-          <button
-            onClick={onDisconnect}
-            className="p-1 text-purple-300 hover:text-red-300 transition-colors"
-            title="Disconnect"
-          >
-            <LogOut className="w-4 h-4" />
-          </button>
-        </div>
+        <button
+          onClick={onDisconnect}
+          className="p-1 text-purple-300 hover:text-red-300 transition-colors"
+          title="Disconnect"
+        >
+          <LogOut className="w-4 h-4" />
+        </button>
       ) : (
         <button
           onClick={onConnect}
