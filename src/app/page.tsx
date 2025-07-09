@@ -6,7 +6,7 @@ import { AccountDropdown } from '@/components/accountDropdown'
 import Footer from '@/components/Footer'
 import { NotificationSidebar, useNotifications } from '@/components/notifications'
 import { useOAuthCallback } from '@/hooks/useOAuthCallback'
-import { Zap, MessageCircle } from 'lucide-react'
+import { HyperYapperIcon } from '@/components/icons/HyperYapperIcon'
 
 export default function Home() {
   const { notifications, dismissNotification, markAsRead, clearAll } = useNotifications()
@@ -22,10 +22,10 @@ export default function Home() {
         <div className="max-w-6xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2">
-                <Zap className="w-8 h-8 text-purple-300 drop-shadow-[0_0_8px_rgba(168,85,247,0.8)]" />
-                <MessageCircle className="w-6 h-6 text-purple-300 drop-shadow-[0_0_6px_rgba(168,85,247,0.8)]" />
-              </div>
+              <HyperYapperIcon 
+                size={28} 
+                className="text-purple-300 drop-shadow-[0_0_8px_rgba(168,85,247,0.8)] -mb-1" 
+              />
               <h1 className="text-2xl font-bold cyberpunk-text">HyperYapper</h1>
             </div>
             
