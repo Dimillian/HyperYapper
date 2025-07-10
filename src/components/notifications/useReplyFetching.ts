@@ -58,6 +58,7 @@ export function useReplyFetching({
       // Import reply fetchers to ensure they're registered
       await import('@/lib/services/mastodonReplies')
       await import('@/lib/services/blueskyReplies')
+      await import('@/lib/services/threadsReplies')
       
       const replyService = getReplyFetcherService()
       const cache = ReplyCache.getInstance()

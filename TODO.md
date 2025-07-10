@@ -81,6 +81,7 @@
 - [x] BlueSky account search API integration for mentions
 - [x] Reply count tracking for Mastodon with smart caching and background refresh
 - [x] Reply count tracking for Bluesky with AT Protocol integration (top-level replies only)
+- [x] Reply count tracking for Threads with Graph API integration
 - [x] Optimized reply fetching to use direct count metadata (50% fewer API calls)
 - [x] Reply count badges in notification cards with unread indicators
 - [x] Manual refresh button for reply counts in notification sidebar
@@ -252,7 +253,7 @@
 - [x] Post content storage with truncated preview display
 - [x] Optimized notification card layout (minimal text for success notifications)
 - [x] Performance optimization: 50% fewer API calls for reply counting
-- [ ] Reply count tracking for Threads platform
+- [x] Reply count tracking for Threads platform with Graph API
 - [ ] Inline reply viewing and interaction
 
 ## 🐛 Known Issues

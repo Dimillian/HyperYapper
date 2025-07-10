@@ -132,6 +132,7 @@ npm run dev
 3. **Required Permissions**:
    - `threads_basic` (required for all endpoints)
    - `threads_content_publish` (for posting content)
+   - `threads_read_replies` (for reply count tracking)
 
 4. **OAuth Flow**:
    - Users will be redirected to Meta's authorization page
@@ -201,6 +202,7 @@ Due to API access restrictions and limitations, X/Twitter support has been remov
 - Instagram integration
 - Link sharing
 - Profile links in success notifications
+- Reply count tracking with Graph API integration
 
 ### Mastodon
 - 500+ characters (instance-dependent)

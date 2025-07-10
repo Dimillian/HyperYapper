@@ -9,7 +9,8 @@ if (!META_APP_ID) {
 export class ThreadsAuth {
   private static readonly SCOPES = [
     'threads_basic',
-    'threads_content_publish'
+    'threads_content_publish',
+    'threads_read_replies'
   ]
 
   static generateAuthUrl(): string {
