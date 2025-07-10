@@ -117,13 +117,22 @@ export class BlueSkyService {
       // Get image dimensions
       const aspectRatio = await this.getImageAspectRatio(imageFile)
 
+      // Compress image if it exceeds BlueSky's size limit (976.56KB)
+      const maxSizeBytes = 976.56 * 1024 // 976.56KB in bytes
+      let processedFile = imageFile
+
+      if (imageFile.size > maxSizeBytes) {
+        console.log(`Image size ${(imageFile.size / 1024).toFixed(2)}KB exceeds BlueSky limit, compressing...`)
+        processedFile = await this.compressImage(imageFile, maxSizeBytes)
+      }
+
       // Convert File to Uint8Array
-      const arrayBuffer = await imageFile.arrayBuffer()
+      const arrayBuffer = await processedFile.arrayBuffer()
       const uint8Array = new Uint8Array(arrayBuffer)
 
       // Upload the image using Agent
       const uploadResponse = await agent.uploadBlob(uint8Array, {
-        encoding: imageFile.type,
+        encoding: processedFile.type,
       })
 
       return {
@@ -152,6 +161,60 @@ export class BlueSkyService {
         URL.revokeObjectURL(objectUrl)
         reject(new Error('Failed to load image'))
       }
+      img.src = objectUrl
+    })
+  }
+
+  private static async compressImage(imageFile: File, maxSizeBytes: number): Promise<File> {
+    return new Promise((resolve, reject) => {
+      const canvas = document.createElement('canvas')
+      const ctx = canvas.getContext('2d')
+      const img = new Image()
+      const objectUrl = URL.createObjectURL(imageFile)
+
+      img.onload = () => {
+        // Set canvas dimensions to maintain aspect ratio
+        canvas.width = img.width
+        canvas.height = img.height
+
+        // Draw image to canvas
+        ctx?.drawImage(img, 0, 0, img.width, img.height)
+
+        // Start with high quality and reduce until size is acceptable
+        let quality = 0.9
+        const tryCompress = () => {
+          canvas.toBlob((blob) => {
+            if (!blob) {
+              reject(new Error('Failed to compress image'))
+              return
+            }
+
+            // Check if compressed size is acceptable or quality is too low
+            if (blob.size <= maxSizeBytes || quality <= 0.1) {
+              const compressedFile = new File([blob], imageFile.name, {
+                type: 'image/jpeg', // Convert to JPEG for better compression
+                lastModified: Date.now()
+              })
+              
+              console.log(`Compressed from ${(imageFile.size / 1024).toFixed(2)}KB to ${(compressedFile.size / 1024).toFixed(2)}KB`)
+              URL.revokeObjectURL(objectUrl)
+              resolve(compressedFile)
+            } else {
+              // Reduce quality and try again
+              quality -= 0.1
+              tryCompress()
+            }
+          }, 'image/jpeg', quality)
+        }
+
+        tryCompress()
+      }
+
+      img.onerror = () => {
+        URL.revokeObjectURL(objectUrl)
+        reject(new Error('Failed to load image for compression'))
+      }
+
       img.src = objectUrl
     })
   }
