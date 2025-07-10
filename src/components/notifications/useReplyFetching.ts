@@ -64,19 +64,11 @@ export function useReplyFetching({
       const cache = ReplyCache.getInstance()
       const notificationsToUpdate = getNotificationsNeedingReplyCounts()
       
-      console.log('Reply fetching started. Notifications to update:', notificationsToUpdate.length)
-      notificationsToUpdate.forEach((notif, index) => {
-        console.log(`Notification ${index + 1}:`, {
-          id: notif.id,
-          postIds: notif.postIds,
-          type: notif.type
-        })
-      })
-      
       let hasFreshFetches = false
       
-      for (const notification of notificationsToUpdate) {
-        if (!notification.postIds) continue
+      // Process all notifications in parallel for better performance
+      const fetchPromises = notificationsToUpdate.map(async (notification) => {
+        if (!notification.postIds) return
         
         // Check cache first for each post reference
         const cachedCounts = cache.getBatchCachedCounts(
@@ -107,7 +99,10 @@ export function useReplyFetching({
             onUpdateNotificationReplyCounts(notification.id, cachedCounts)
           }
         }
-      }
+      })
+      
+      // Wait for all fetches to complete
+      await Promise.allSettled(fetchPromises)
       
       // Ensure spinner shows for at least 500ms to provide visual feedback
       if (hasFreshFetches) {
