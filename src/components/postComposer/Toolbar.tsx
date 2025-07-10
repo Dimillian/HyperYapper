@@ -1,4 +1,4 @@
-import { RefObject } from 'react'
+import { RefObject, useState, useRef } from 'react'
 import { 
   Send, 
   Image, 
@@ -10,6 +10,7 @@ import {
 } from 'lucide-react'
 import { PLATFORMS } from '@/types/platform'
 import { getPlatformIcon } from './utils'
+import { CustomEmojiPicker } from './EmojiPicker'
 
 interface ToolbarProps {
   fileInputRef: RefObject<HTMLInputElement | null>
@@ -30,6 +31,18 @@ export function Toolbar({
   onPost,
   onInsertText
 }: ToolbarProps) {
+  const [isEmojiPickerVisible, setIsEmojiPickerVisible] = useState(false)
+  const emojiButtonRef = useRef<HTMLButtonElement>(null)
+
+  const handleEmojiSelect = (emoji: string) => {
+    onInsertText?.(emoji)
+    setIsEmojiPickerVisible(false)
+  }
+
+  const toggleEmojiPicker = () => {
+    setIsEmojiPickerVisible(!isEmojiPickerVisible)
+  }
+
   return (
     <div className="flex items-center justify-between pt-2">
       <div className="flex items-center gap-2">
@@ -41,11 +54,18 @@ export function Toolbar({
           <Image className="w-5 h-5 text-purple-300 hover:text-purple-200" />
         </button>
         <button 
-          disabled
-          className="p-2 rounded-lg bg-black/50 border border-gray-600/30 cursor-not-allowed opacity-50 transition-all duration-200"
-          title="Emoji picker (coming soon)"
+          ref={emojiButtonRef}
+          onClick={toggleEmojiPicker}
+          className={`p-2 rounded-lg bg-black/50 border transition-all duration-200 ${
+            isEmojiPickerVisible 
+              ? 'border-purple-300/50 bg-purple-500/10' 
+              : 'border-purple-400/30 hover:border-purple-300/50 hover:bg-purple-500/10'
+          }`}
+          title="Add emoji"
         >
-          <Smile className="w-5 h-5 text-gray-500" />
+          <Smile className={`w-5 h-5 transition-colors duration-200 ${
+            isEmojiPickerVisible ? 'text-purple-200' : 'text-purple-300 hover:text-purple-200'
+          }`} />
         </button>
         <button 
           onClick={() => onInsertText?.('#')}
@@ -110,6 +130,14 @@ export function Toolbar({
           )}
         </button>
       </div>
+      
+      {/* Emoji Picker */}
+      <CustomEmojiPicker
+        isVisible={isEmojiPickerVisible}
+        onEmojiSelect={handleEmojiSelect}
+        onClose={() => setIsEmojiPickerVisible(false)}
+        anchorElement={emojiButtonRef.current}
+      />
     </div>
   )
 }

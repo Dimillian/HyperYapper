@@ -90,6 +90,7 @@ The [TODO.md](./TODO.md) file must be kept up to date as the single source of tr
   - Catch and fix potential build errors
   - Ensure production-ready code
   - Verify all changes compile correctly
+- Only run npm run typecheck to check the build as I'm running dev server to avoid stealing my current build
 
 ### Component Architecture Guidelines
 Following HyperGit's successful patterns:

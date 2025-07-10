@@ -100,3 +100,238 @@
 html {
   scroll-behavior: smooth;
 }
+
+/* Emoji Picker Cyberpunk Theme */
+.emoji-picker-wrapper {
+  @apply glass-card overflow-hidden;
+  animation: emojiPickerFadeIn 0.2s ease-out;
+}
+
+/* Hide the original category nav and replace with custom one */
+.emoji-picker-wrapper .epr-category-nav {
+  display: none !important;
+}
+
+
+/* Adjust emoji picker layout for custom categories */
+.emoji-picker-wrapper .epr-header {
+  border-bottom: none !important; /* Remove border since we'll add categories below */
+}
+
+.emoji-picker-wrapper .epr-body {
+  border-top: none !important; /* Remove double border - categories have their own border */
+  margin-top: 46px !important; /* Make space for our custom category nav */
+}
+
+/* Custom category navigation styles */
+.custom-emoji-categories {
+  padding: 8px 12px !important;
+  background: rgba(0, 0, 0, 0.6) !important;
+  border-bottom: 1px solid rgba(168, 85, 247, 0.3) !important;
+  border-top: 1px solid rgba(168, 85, 247, 0.3) !important;
+}
+
+.custom-emoji-categories .category-scroll {
+  display: flex !important;
+  gap: 4px !important;
+  overflow-x: auto !important;
+  scrollbar-width: thin !important;
+  scrollbar-color: rgba(168, 85, 247, 0.5) transparent !important;
+  padding: 4px 0 !important;
+}
+
+.custom-emoji-categories .category-scroll::-webkit-scrollbar {
+  height: 4px !important;
+}
+
+.custom-emoji-categories .category-scroll::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3) !important;
+  border-radius: 2px !important;
+}
+
+.custom-emoji-categories .category-scroll::-webkit-scrollbar-thumb {
+  background: rgba(168, 85, 247, 0.5) !important;
+  border-radius: 2px !important;
+}
+
+.custom-emoji-categories .category-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(168, 85, 247, 0.7) !important;
+}
+
+@keyframes emojiPickerFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.emoji-picker-wrapper .epr-main {
+  background: rgba(0, 0, 0, 0.8) !important;
+  border: none !important;
+  backdrop-filter: blur(12px) !important;
+}
+
+.emoji-picker-wrapper .epr-header {
+  background: rgba(0, 0, 0, 0.6) !important;
+  border-bottom: 1px solid rgba(168, 85, 247, 0.3) !important;
+  padding: 12px !important;
+}
+
+.emoji-picker-wrapper .epr-search-container {
+  position: relative !important;
+}
+
+.emoji-picker-wrapper .epr-search-container input {
+  background: rgba(0, 0, 0, 0.7) !important;
+  border: 1px solid rgba(168, 85, 247, 0.4) !important;
+  color: rgb(196, 181, 253) !important;
+  border-radius: 8px !important;
+  padding: 8px 12px 8px 36px !important;
+  transition: all 0.2s ease !important;
+  width: 100% !important;
+}
+
+.emoji-picker-wrapper .epr-search-container input:focus {
+  border-color: rgba(168, 85, 247, 0.7) !important;
+  box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.2) !important;
+  outline: none !important;
+}
+
+.emoji-picker-wrapper .epr-search-container input::placeholder {
+  color: rgba(196, 181, 253, 0.5) !important;
+}
+
+.emoji-picker-wrapper .epr-search-container svg,
+.emoji-picker-wrapper .epr-search-container .epr-search-icon {
+  position: absolute !important;
+  left: 10px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  width: 16px !important;
+  height: 16px !important;
+  color: rgba(196, 181, 253, 0.6) !important;
+  fill: rgba(196, 181, 253, 0.6) !important;
+  pointer-events: none !important;
+  z-index: 1 !important;
+}
+
+.emoji-picker-wrapper .epr-category-nav {
+  background: rgba(0, 0, 0, 0.6) !important;
+  border-bottom: 1px solid rgba(168, 85, 247, 0.3) !important;
+  padding: 8px !important;
+}
+
+.emoji-picker-wrapper .epr-cat-btn {
+  background: transparent !important;
+  border: 1px solid rgba(168, 85, 247, 0.3) !important;
+  border-radius: 6px !important;
+  padding: 6px !important;
+  margin: 0 2px !important;
+  transition: all 0.2s ease !important;
+  font-size: 16px !important;
+  line-height: 1 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 32px !important;
+  min-height: 32px !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.emoji-picker-wrapper .epr-cat-btn * {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.emoji-picker-wrapper .epr-cat-btn:hover {
+  background: rgba(168, 85, 247, 0.2) !important;
+  border-color: rgba(168, 85, 247, 0.5) !important;
+  box-shadow: 0 0 8px rgba(168, 85, 247, 0.3) !important;
+}
+
+.emoji-picker-wrapper .epr-cat-btn.epr-active {
+  background: rgba(168, 85, 247, 0.3) !important;
+  border-color: rgba(168, 85, 247, 0.7) !important;
+  box-shadow: 0 0 12px rgba(168, 85, 247, 0.4) !important;
+}
+
+.emoji-picker-wrapper .epr-cat-btn svg,
+.emoji-picker-wrapper .epr-cat-btn span,
+.emoji-picker-wrapper .epr-cat-btn .epr-cat-icon {
+  width: 20px !important;
+  height: 20px !important;
+  font-size: 16px !important;
+  color: rgba(196, 181, 253, 0.8) !important;
+  fill: rgba(196, 181, 253, 0.8) !important;
+}
+
+.emoji-picker-wrapper .epr-cat-btn:hover svg,
+.emoji-picker-wrapper .epr-cat-btn:hover span,
+.emoji-picker-wrapper .epr-cat-btn:hover .epr-cat-icon {
+  color: rgba(196, 181, 253, 1) !important;
+  fill: rgba(196, 181, 253, 1) !important;
+}
+
+.emoji-picker-wrapper .epr-cat-btn.epr-active svg,
+.emoji-picker-wrapper .epr-cat-btn.epr-active span,
+.emoji-picker-wrapper .epr-cat-btn.epr-active .epr-cat-icon {
+  color: rgb(196, 181, 253) !important;
+  fill: rgb(196, 181, 253) !important;
+}
+
+.emoji-picker-wrapper .epr-body {
+  background: rgba(0, 0, 0, 0.8) !important;
+}
+
+.emoji-picker-wrapper .epr-emoji-category-label {
+  background: rgba(0, 0, 0, 0.9) !important;
+  color: rgb(196, 181, 253) !important;
+  font-weight: 600 !important;
+  padding: 8px 12px !important;
+  border-bottom: 1px solid rgba(168, 85, 247, 0.2) !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 10 !important;
+}
+
+.emoji-picker-wrapper .epr-emoji-btn {
+  border-radius: 6px !important;
+  padding: 4px !important;
+  transition: all 0.15s ease !important;
+  background: transparent !important;
+  border: 1px solid transparent !important;
+}
+
+.emoji-picker-wrapper .epr-emoji-btn:hover {
+  background: rgba(168, 85, 247, 0.15) !important;
+  border-color: rgba(168, 85, 247, 0.3) !important;
+  box-shadow: 0 0 6px rgba(168, 85, 247, 0.2) !important;
+  transform: scale(1.1) !important;
+}
+
+.emoji-picker-wrapper .epr-emoji-btn:active {
+  transform: scale(0.95) !important;
+}
+
+/* Custom scrollbar for emoji picker */
+.emoji-picker-wrapper .epr-body::-webkit-scrollbar {
+  width: 6px !important;
+}
+
+.emoji-picker-wrapper .epr-body::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3) !important;
+}
+
+.emoji-picker-wrapper .epr-body::-webkit-scrollbar-thumb {
+  background: rgba(168, 85, 247, 0.5) !important;
+  border-radius: 3px !important;
+}
+
+.emoji-picker-wrapper .epr-body::-webkit-scrollbar-thumb:hover {
+  background: rgba(168, 85, 247, 0.7) !important;
+}
