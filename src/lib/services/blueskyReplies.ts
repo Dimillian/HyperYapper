@@ -99,11 +99,37 @@ export class BlueskyReplyFetcher implements ReplyFetcher {
       })
 
       console.log('Bluesky post data received:', postData)
+      console.log('Bluesky post value:', postData.value)
 
       // Use the replyCount from the post metadata directly
       const replyCount = postData.value?.replyCount || 0
       
-      console.log('Bluesky reply count:', replyCount)
+      console.log('Bluesky reply count from metadata:', replyCount)
+      
+      // If metadata shows 0, let's try fetching the actual thread to count replies
+      if (replyCount === 0) {
+        console.log('Metadata shows 0 replies, trying thread fetch as fallback...')
+        try {
+          const thread = await this.makeRequest('app.bsky.feed.getPostThread', {
+            uri: postRef.postUri,
+            depth: '1'
+          })
+          const actualReplies = thread.thread?.replies || []
+          console.log('Thread replies found:', actualReplies.length, actualReplies)
+          if (actualReplies.length > 0) {
+            console.log('Using thread reply count instead of metadata')
+            return {
+              platform: 'bluesky',
+              postId: postRef.postId,
+              count: actualReplies.length,
+              hasUnread: true,
+              replies: []
+            }
+          }
+        } catch (threadError) {
+          console.error('Failed to fetch thread as fallback:', threadError)
+        }
+      }
       
       // For now, we'll consider all replies as "unread" since we don't have 
       // a mechanism to track read state yet
