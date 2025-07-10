@@ -160,6 +160,26 @@ export function PostEditor() {
     }
   }
 
+  const handleInsertText = useCallback((text: string) => {
+    if (textareaRef.current) {
+      const textarea = textareaRef.current
+      const start = textarea.selectionStart
+      const end = textarea.selectionEnd
+      const newContent = content.substring(0, start) + text + content.substring(end)
+      
+      setContent(newContent)
+      
+      // Set cursor position after the inserted text
+      setTimeout(() => {
+        if (textareaRef.current) {
+          const newCursorPos = start + text.length
+          textareaRef.current.setSelectionRange(newCursorPos, newCursorPos)
+          textareaRef.current.focus()
+        }
+      }, 0)
+    }
+  }, [content, setContent])
+
   const getCharacterLimit = () => {
     if (selectedPlatforms.length === 0) return 280
     return Math.min(...selectedPlatforms.map(id => PLATFORM_LIMITS[id as keyof typeof PLATFORM_LIMITS]))
@@ -228,6 +248,7 @@ export function PostEditor() {
           isOverLimit={isOverLimit}
           isPosting={isPosting}
           onPost={handlePost}
+          onInsertText={handleInsertText}
         />
 
       </div>
