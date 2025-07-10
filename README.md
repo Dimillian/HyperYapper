@@ -156,6 +156,7 @@ npm run dev
    - Image uploads with media processing
    - Real-time @mention autocomplete with account search
    - Full Mastodon mention format (@username@instance.domain)
+   - Optimized reply count tracking via direct API metadata
    - Account verification and connection status
    - Automatic token management
 
@@ -189,7 +190,7 @@ Due to API access restrictions and limitations, X/Twitter support has been remov
    - Post creation with 300 character limit
    - Image upload with automatic aspect ratio preservation
    - Real-time mention autocomplete with account search
-   - Reply count tracking via AT Protocol (top-level replies only)
+   - Optimized reply count tracking via AT Protocol metadata (direct API access)
    - Full integration with cross-posting interface
 
 ## 📱 Platform Support
@@ -206,7 +207,7 @@ Due to API access restrictions and limitations, X/Twitter support has been remov
 - Image uploads with polling-based processing
 - Real-time @mention autocomplete with account search
 - Full federation support (@username@instance.domain)
-- Reply count tracking with automatic refresh
+- Optimized reply count tracking with automatic refresh (direct metadata API)
 - Content warnings
 - Custom emojis
 
@@ -214,7 +215,7 @@ Due to API access restrictions and limitations, X/Twitter support has been remov
 - 300 character posts with automatic optimization
 - Image uploads with aspect ratio preservation
 - Real-time mention autocomplete with account search
-- Reply count tracking with AT Protocol integration (top-level replies)
+- Optimized reply count tracking via AT Protocol metadata (direct API access)
 - AT Protocol OAuth 2.0 authentication with DPoP and PKCE
 - Decentralized features with handle-based identity
 - Custom feeds and federated timeline
