@@ -12,7 +12,7 @@ import { TextArea } from './TextArea'
 import { ImagePreview } from './ImagePreview'
 import { Toolbar } from './Toolbar'
 import { useNotifications } from '../notifications'
-import { MastodonSession } from '@/types/auth'
+import { MastodonSession, BlueSkySession } from '@/types/auth'
 
 export function PostEditor() {
   const [content, setContent] = useState('')
@@ -21,6 +21,7 @@ export function PostEditor() {
   const [connectedPlatforms, setConnectedPlatforms] = useState<string[]>([])
   const [isPosting, setIsPosting] = useState(false)
   const [mastodonSession, setMastodonSession] = useState<MastodonSession | null>(null)
+  const [blueSkySession, setBlueSkySession] = useState<BlueSkySession | null>(null)
   
   const { addNotification } = useNotifications()
   
@@ -44,9 +45,12 @@ export function PostEditor() {
     const connected = sessionManager.getConnectedPlatforms()
     setConnectedPlatforms(connected)
     
-    // Get Mastodon session if available
+    // Get platform sessions if available
     const mastodonSession = sessionManager.getMastodonSession()
     setMastodonSession(mastodonSession)
+    
+    const blueSkySession = sessionManager.getBlueSkySession()
+    setBlueSkySession(blueSkySession)
     
     // Update selected platforms to only include connected ones
     setSelectedPlatforms(prev => {
@@ -200,6 +204,7 @@ export function PostEditor() {
           selectedPlatforms={selectedPlatforms}
           onPaste={handlePaste}
           mastodonSession={mastodonSession}
+          blueSkySession={blueSkySession}
         />
 
         {/* Image Previews */}

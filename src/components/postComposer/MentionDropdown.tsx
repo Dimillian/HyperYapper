@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { MastodonPoster } from '@/lib/posting/mastodon'
-import { MastodonSession } from '@/types/auth'
+import { BlueSkyPoster } from '@/lib/posting/bluesky'
+import { MastodonSession, BlueSkySession } from '@/types/auth'
 
 interface MastodonAccount {
   id: string
@@ -11,12 +12,24 @@ interface MastodonAccount {
   avatar_static: string
 }
 
+interface BlueSkyAccount {
+  did: string
+  handle: string
+  displayName: string
+  avatar?: string
+  description?: string
+}
+
+type Account = MastodonAccount | BlueSkyAccount
+
 interface MentionDropdownProps {
   isVisible: boolean
   query: string
   position: { top: number; left: number }
   mastodonSession: MastodonSession | null
-  onSelect: (account: MastodonAccount) => void
+  blueSkySession: BlueSkySession | null
+  platform: 'mastodon' | 'bluesky'
+  onSelect: (account: Account) => void
   onClose: () => void
 }
 
@@ -25,15 +38,18 @@ export function MentionDropdown({
   query, 
   position, 
   mastodonSession, 
+  blueSkySession,
+  platform,
   onSelect, 
   onClose 
 }: MentionDropdownProps) {
-  const [accounts, setAccounts] = useState<MastodonAccount[]>([])
+  const [accounts, setAccounts] = useState<Account[]>([])
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
-    if (!isVisible || !mastodonSession || query.length < 2) {
+    const session = platform === 'mastodon' ? mastodonSession : blueSkySession
+    if (!isVisible || !session || query.length < 2) {
       setAccounts([])
       return
     }
@@ -41,7 +57,12 @@ export function MentionDropdown({
     const searchAccounts = async () => {
       setIsLoading(true)
       try {
-        const results = await MastodonPoster.searchAccounts(mastodonSession, query)
+        let results: Account[] = []
+        if (platform === 'mastodon' && mastodonSession) {
+          results = await MastodonPoster.searchAccounts(mastodonSession, query)
+        } else if (platform === 'bluesky' && blueSkySession) {
+          results = await BlueSkyPoster.searchAccounts(blueSkySession, query)
+        }
         setAccounts(results)
         setSelectedIndex(0)
       } catch (error) {
@@ -55,7 +76,7 @@ export function MentionDropdown({
     // Debounce search
     const timer = setTimeout(searchAccounts, 300)
     return () => clearTimeout(timer)
-  }, [isVisible, query, mastodonSession])
+  }, [isVisible, query, mastodonSession, blueSkySession, platform])
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -103,29 +124,46 @@ export function MentionDropdown({
         </div>
       ) : (
         <div className="py-2">
-          {accounts.map((account, index) => (
-            <button
-              key={account.id}
-              onClick={() => onSelect(account)}
-              className={`w-full px-3 py-2 text-left hover:bg-purple-500/20 transition-colors duration-150 flex items-center gap-3 ${
-                index === selectedIndex ? 'bg-purple-500/20' : ''
-              }`}
-            >
-              <img 
-                src={account.avatar_static} 
-                alt={account.display_name}
-                className="w-8 h-8 rounded-full border border-purple-300/30"
-              />
-              <div className="flex-1 min-w-0">
-                <div className="text-purple-100 font-medium truncate">
-                  {account.display_name || account.username}
+          {accounts.map((account, index) => {
+            const isMastodon = 'acct' in account
+            const displayName = isMastodon ? account.display_name || account.username : account.displayName
+            const handle = isMastodon ? account.acct : account.handle
+            const avatar = isMastodon ? account.avatar_static : account.avatar
+            const accountKey = isMastodon ? account.id : account.did
+            
+            return (
+              <button
+                key={accountKey}
+                onClick={() => onSelect(account)}
+                className={`w-full px-3 py-2 text-left hover:bg-purple-500/20 transition-colors duration-150 flex items-center gap-3 ${
+                  index === selectedIndex ? 'bg-purple-500/20' : ''
+                }`}
+              >
+                {avatar && (
+                  <img 
+                    src={avatar} 
+                    alt={displayName}
+                    className="w-8 h-8 rounded-full border border-purple-300/30"
+                  />
+                )}
+                {!avatar && (
+                  <div className="w-8 h-8 rounded-full border border-purple-300/30 bg-purple-500/20 flex items-center justify-center">
+                    <span className="text-purple-300 text-sm font-medium">
+                      {displayName.charAt(0).toUpperCase()}
+                    </span>
+                  </div>
+                )}
+                <div className="flex-1 min-w-0">
+                  <div className="text-purple-100 font-medium truncate">
+                    {displayName}
+                  </div>
+                  <div className="text-purple-300/60 text-sm truncate">
+                    @{handle}
+                  </div>
                 </div>
-                <div className="text-purple-300/60 text-sm truncate">
-                  @{account.acct}
-                </div>
-              </div>
-            </button>
-          ))}
+              </button>
+            )
+          })}
         </div>
       )}
     </div>

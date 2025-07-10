@@ -16,6 +16,16 @@ interface MastodonAccount {
   avatar_static: string
 }
 
+interface BlueSkyAccount {
+  did: string
+  handle: string
+  displayName: string
+  avatar?: string
+  description?: string
+}
+
+type Account = MastodonAccount | BlueSkyAccount
+
 export function useMentionHandler(
   textareaRef: RefObject<HTMLTextAreaElement | null>,
   content: string,
@@ -30,6 +40,9 @@ export function useMentionHandler(
   })
 
   const isMastodonOnly = selectedPlatforms.length === 1 && selectedPlatforms[0] === 'mastodon'
+  const isBlueSkyOnly = selectedPlatforms.length === 1 && selectedPlatforms[0] === 'bluesky'
+  const isSinglePlatform = isMastodonOnly || isBlueSkyOnly
+  const mentionPlatform: 'mastodon' | 'bluesky' | null = isMastodonOnly ? 'mastodon' : isBlueSkyOnly ? 'bluesky' : null
 
   const calculateCaretPosition = useCallback(() => {
     if (!textareaRef.current) return { top: 0, left: 0 }
@@ -95,7 +108,7 @@ export function useMentionHandler(
   }, [textareaRef, content])
 
   const handleInput = useCallback((newContent: string) => {
-    if (!isMastodonOnly) {
+    if (!isSinglePlatform) {
       setMentionState(prev => ({ ...prev, isVisible: false }))
       return
     }
@@ -138,12 +151,13 @@ export function useMentionHandler(
       position,
       startIndex: lastAtIndex
     })
-  }, [isMastodonOnly, textareaRef, calculateCaretPosition])
+  }, [isSinglePlatform, textareaRef, calculateCaretPosition])
 
-  const handleMentionSelect = useCallback((account: MastodonAccount) => {
+  const handleMentionSelect = useCallback((account: Account) => {
     const beforeMention = content.substring(0, mentionState.startIndex)
     const afterCursor = content.substring(textareaRef.current?.selectionStart || 0)
-    const mentionText = `@${account.acct}`
+    const isMastodon = 'acct' in account
+    const mentionText = `@${isMastodon ? account.acct : account.handle}`
     
     const newContent = beforeMention + mentionText + ' ' + afterCursor
     setContent(newContent)
@@ -169,6 +183,7 @@ export function useMentionHandler(
     handleInput,
     handleMentionSelect,
     closeMentionDropdown,
-    isMastodonOnly
+    isSinglePlatform,
+    mentionPlatform
   }
 }

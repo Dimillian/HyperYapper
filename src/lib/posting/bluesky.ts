@@ -2,6 +2,14 @@ import { BlueSkyService } from '@/lib/services/bluesky'
 import { BlueSkySession } from '@/types/auth'
 import { PostResult } from '@/types/post'
 
+interface BlueSkyAccount {
+  did: string
+  handle: string
+  displayName: string
+  avatar?: string
+  description?: string
+}
+
 export class BlueSkyPoster {
   static async post(
     session: BlueSkySession,
@@ -69,6 +77,18 @@ export class BlueSkyPoster {
     } catch (error) {
       console.error('BlueSky connection verification error:', error)
       return false
+    }
+  }
+
+  static async searchAccounts(session: BlueSkySession, query: string): Promise<BlueSkyAccount[]> {
+    if (!query.trim()) return []
+    
+    try {
+      const results = await BlueSkyService.searchProfiles(session, query)
+      return results
+    } catch (error) {
+      console.error('Failed to search BlueSky accounts:', error)
+      return []
     }
   }
 }

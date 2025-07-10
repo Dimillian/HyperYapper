@@ -263,4 +263,36 @@ export class BlueSkyService {
       throw error
     }
   }
+
+  static async searchProfiles(session: BlueSkySession, query: string): Promise<Array<{
+    did: string
+    handle: string
+    displayName: string
+    avatar?: string
+    description?: string
+  }>> {
+    try {
+      const agent = await this.getAgent(session)
+      
+      if (!agent) {
+        throw new Error('Failed to create BlueSky agent')
+      }
+
+      const response = await agent.searchActors({
+        term: query,
+        limit: 8
+      })
+
+      return response.data.actors.map(actor => ({
+        did: actor.did,
+        handle: actor.handle,
+        displayName: actor.displayName || actor.handle,
+        avatar: actor.avatar,
+        description: actor.description
+      }))
+    } catch (error) {
+      console.error('Error searching BlueSky profiles:', error)
+      return []
+    }
+  }
 }
