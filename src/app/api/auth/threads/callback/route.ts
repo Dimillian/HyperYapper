@@ -84,12 +84,18 @@ export async function POST(request: NextRequest) {
 }
 
 async function exchangeForLongLivedToken(shortLivedToken: string): Promise<{access_token: string, token_type: string, expires_in: number}> {
-  const tokenUrl = new URL('https://graph.threads.net/access_token')
-  tokenUrl.searchParams.set('grant_type', 'th_exchange_token')
-  tokenUrl.searchParams.set('client_secret', META_APP_SECRET!)
-  tokenUrl.searchParams.set('access_token', shortLivedToken)
-
-  const response = await fetch(tokenUrl.toString())
+  // Use POST method for long-lived token exchange
+  const response = await fetch('https://graph.threads.net/access_token', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: new URLSearchParams({
+      grant_type: 'th_exchange_token',
+      client_secret: META_APP_SECRET!,
+      access_token: shortLivedToken
+    })
+  })
   
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}))
