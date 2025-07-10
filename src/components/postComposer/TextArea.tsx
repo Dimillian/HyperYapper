@@ -1,4 +1,4 @@
-import React, { RefObject } from 'react'
+import { RefObject } from 'react'
 import { PLATFORM_LIMITS } from './types'
 import { SyntaxHighlighter } from './SyntaxHighlighter'
 import { MentionDropdown } from './MentionDropdown'
@@ -15,7 +15,6 @@ interface TextAreaProps {
   onPaste: (e: React.ClipboardEvent) => void
   mastodonSession: MastodonSession | null
   blueSkySession: BlueSkySession | null
-  mentionButtonRef?: React.MutableRefObject<{ handleMentionButtonClick: () => void } | null>
 }
 
 export function TextArea({
@@ -27,8 +26,7 @@ export function TextArea({
   selectedPlatforms,
   onPaste,
   mastodonSession,
-  blueSkySession,
-  mentionButtonRef
+  blueSkySession
 }: TextAreaProps) {
   const getCharacterLimit = () => {
     if (selectedPlatforms.length === 0) return 280
@@ -44,9 +42,7 @@ export function TextArea({
     handleInput,
     handleMentionSelect,
     closeMentionDropdown,
-    handleMentionButtonClick,
     isSinglePlatform,
-    hasConnectedPlatforms,
     mentionPlatform
   } = useMentionHandler(textareaRef, content, setContent, selectedPlatforms)
 
@@ -54,13 +50,6 @@ export function TextArea({
     setContent(newContent)
     handleInput(newContent)
   }
-
-  // Expose handleMentionButtonClick via ref
-  React.useEffect(() => {
-    if (mentionButtonRef) {
-      mentionButtonRef.current = { handleMentionButtonClick }
-    }
-  }, [mentionButtonRef, handleMentionButtonClick])
 
   return (
     <div className="relative">
@@ -100,7 +89,7 @@ export function TextArea({
       </div>
 
       {/* Mention Dropdown */}
-      {hasConnectedPlatforms && (
+      {isSinglePlatform && mentionPlatform && (
         <MentionDropdown
           isVisible={mentionState.isVisible}
           query={mentionState.query}
@@ -108,7 +97,6 @@ export function TextArea({
           mastodonSession={mastodonSession}
           blueSkySession={blueSkySession}
           platform={mentionPlatform}
-          allowMultiPlatform={!isSinglePlatform}
           onSelect={handleMentionSelect}
           onClose={closeMentionDropdown}
         />

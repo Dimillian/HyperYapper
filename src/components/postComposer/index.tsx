@@ -27,7 +27,6 @@ export function PostEditor() {
   
   const fileInputRef = useRef<HTMLInputElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
-  const mentionButtonRef = useRef<{ handleMentionButtonClick: () => void } | null>(null)
 
   const {
     attachedImages,
@@ -161,12 +160,6 @@ export function PostEditor() {
     }
   }
 
-  const handleMentionButtonClick = useCallback(() => {
-    if (mentionButtonRef.current) {
-      mentionButtonRef.current.handleMentionButtonClick()
-    }
-  }, [])
-
   const getCharacterLimit = () => {
     if (selectedPlatforms.length === 0) return 280
     return Math.min(...selectedPlatforms.map(id => PLATFORM_LIMITS[id as keyof typeof PLATFORM_LIMITS]))
@@ -212,7 +205,6 @@ export function PostEditor() {
           onPaste={handlePaste}
           mastodonSession={mastodonSession}
           blueSkySession={blueSkySession}
-          mentionButtonRef={mentionButtonRef}
         />
 
         {/* Image Previews */}
@@ -236,7 +228,6 @@ export function PostEditor() {
           isOverLimit={isOverLimit}
           isPosting={isPosting}
           onPost={handlePost}
-          onMentionClick={handleMentionButtonClick}
         />
 
       </div>
