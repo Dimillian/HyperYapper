@@ -42,6 +42,7 @@ export function useMentionHandler(
   const isMastodonOnly = selectedPlatforms.length === 1 && selectedPlatforms[0] === 'mastodon'
   const isBlueSkyOnly = selectedPlatforms.length === 1 && selectedPlatforms[0] === 'bluesky'
   const isSinglePlatform = isMastodonOnly || isBlueSkyOnly
+  const hasConnectedPlatforms = selectedPlatforms.some(p => p === 'mastodon' || p === 'bluesky')
   const mentionPlatform: 'mastodon' | 'bluesky' | null = isMastodonOnly ? 'mastodon' : isBlueSkyOnly ? 'bluesky' : null
 
   const calculateCaretPosition = useCallback(() => {
@@ -153,7 +154,7 @@ export function useMentionHandler(
     })
   }, [isSinglePlatform, textareaRef, calculateCaretPosition])
 
-  const handleMentionSelect = useCallback((account: Account) => {
+  const handleMentionSelect = useCallback((account: Account, platform: 'mastodon' | 'bluesky') => {
     const beforeMention = content.substring(0, mentionState.startIndex)
     const afterCursor = content.substring(textareaRef.current?.selectionStart || 0)
     const isMastodon = 'acct' in account
@@ -174,6 +175,36 @@ export function useMentionHandler(
     setMentionState(prev => ({ ...prev, isVisible: false }))
   }, [content, mentionState.startIndex, textareaRef, setContent])
 
+  const handleMentionButtonClick = useCallback(() => {
+    if (!hasConnectedPlatforms) return
+    
+    const textarea = textareaRef.current
+    if (!textarea) return
+
+    const cursorPosition = textarea.selectionStart
+    const position = calculateCaretPosition()
+    
+    // Insert @ at cursor position and show dropdown
+    const newContent = content.substring(0, cursorPosition) + '@' + content.substring(cursorPosition)
+    setContent(newContent)
+    
+    // Set cursor after the @ and show dropdown
+    setTimeout(() => {
+      if (textareaRef.current) {
+        const newCursorPos = cursorPosition + 1
+        textareaRef.current.setSelectionRange(newCursorPos, newCursorPos)
+        textareaRef.current.focus()
+        
+        setMentionState({
+          isVisible: true,
+          query: '',
+          position,
+          startIndex: cursorPosition
+        })
+      }
+    }, 0)
+  }, [content, setContent, textareaRef, calculateCaretPosition, hasConnectedPlatforms])
+
   const closeMentionDropdown = useCallback(() => {
     setMentionState(prev => ({ ...prev, isVisible: false }))
   }, [])
@@ -183,7 +214,9 @@ export function useMentionHandler(
     handleInput,
     handleMentionSelect,
     closeMentionDropdown,
+    handleMentionButtonClick,
     isSinglePlatform,
+    hasConnectedPlatforms,
     mentionPlatform
   }
 }

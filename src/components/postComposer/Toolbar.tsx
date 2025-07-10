@@ -18,6 +18,7 @@ interface ToolbarProps {
   isOverLimit: boolean
   isPosting: boolean
   onPost: () => void
+  onMentionClick?: () => void
 }
 
 export function Toolbar({
@@ -26,7 +27,8 @@ export function Toolbar({
   content,
   isOverLimit,
   isPosting,
-  onPost
+  onPost,
+  onMentionClick
 }: ToolbarProps) {
   return (
     <div className="flex items-center justify-between pt-2">
@@ -44,7 +46,11 @@ export function Toolbar({
         <button className="p-2 rounded-lg bg-black/50 border border-purple-400/30 hover:border-purple-300/50 hover:bg-purple-500/10 transition-all duration-200">
           <Hash className="w-5 h-5 text-purple-300 hover:text-purple-200" />
         </button>
-        <button className="p-2 rounded-lg bg-black/50 border border-purple-400/30 hover:border-purple-300/50 hover:bg-purple-500/10 transition-all duration-200">
+        <button 
+          onClick={onMentionClick}
+          className="p-2 rounded-lg bg-black/50 border border-purple-400/30 hover:border-purple-300/50 hover:bg-purple-500/10 transition-all duration-200"
+          title="Add mention"
+        >
           <AtSign className="w-5 h-5 text-purple-300 hover:text-purple-200" />
         </button>
         <button className="p-2 rounded-lg bg-black/50 border border-purple-400/30 hover:border-purple-300/50 hover:bg-purple-500/10 transition-all duration-200">
