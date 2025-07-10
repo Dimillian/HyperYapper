@@ -15,7 +15,7 @@ HyperYapper is a beautiful, cyberpunk-styled cross-posting application that lets
 - **Platform Optimization**: Automatic formatting and character limits for each platform
 - **Media Support**: Upload images with drag-and-drop, paste, and file selection
 - **Image Hosting**: Cloudflare R2 integration with automatic cleanup after posting
-- **Smart Notifications**: Persistent notification timeline with post links, status tracking, and auto-collapse/expand
+- **Smart Notifications**: Persistent notification timeline with post links, status tracking, auto-collapse/expand, and reply count tracking
 - **Dark Theme**: Sleek black interface with neon purple accents and glass morphism
 - **Account Management**: Connect and manage multiple social accounts with OAuth flows
 - **Emoji Studio**: Browse and search system emojis by category with recently used tracking
@@ -205,6 +205,7 @@ Due to API access restrictions and limitations, X/Twitter support has been remov
 - Image uploads with polling-based processing
 - Real-time @mention autocomplete with account search
 - Full federation support (@username@instance.domain)
+- Reply count tracking with automatic refresh
 - Content warnings
 - Custom emojis
 
@@ -266,7 +267,7 @@ src/
 │   └── api/               # API routes (media upload/delete)
 ├── components/
 │   ├── accountDropdown/    # Account management UI with full platform support
-│   ├── notifications/      # Smart notification system with timeline and auto-collapse
+│   ├── notifications/      # Smart notification system with timeline, auto-collapse, and reply tracking
 │   ├── postComposer/      # Post creation interface with mention autocomplete for Mastodon and Bluesky
 │   └── *.tsx              # Other components
 ├── lib/

@@ -13,6 +13,27 @@ import { ImagePreview } from './ImagePreview'
 import { Toolbar } from './Toolbar'
 import { useNotifications } from '../notifications'
 import { MastodonSession, BlueSkySession } from '@/types/auth'
+import { OriginalPost, PostReference } from '../notifications/types'
+
+// Utility function to create truncated preview (first two lines + "...")
+const createTruncatedPreview = (content: string): string => {
+  const lines = content.trim().split('\n').filter(line => line.trim() !== '')
+  if (lines.length <= 2) {
+    return content.trim()
+  }
+  return lines.slice(0, 2).join('\n') + '...'
+}
+
+// Create post references from successful post results
+const createPostReferences = (results: any[]): PostReference[] => {
+  return results
+    .filter(r => r.success && r.postId)
+    .map(r => ({
+      platform: r.platform,
+      postId: r.postId,
+      postUri: r.postUri || undefined // For Bluesky AT-URI
+    }))
+}
 
 export function PostEditor() {
   const [content, setContent] = useState('')
@@ -129,10 +150,21 @@ export function PostEditor() {
         notificationType = 'error'
       }
 
+      // Create original post data for successful posts
+      const originalPost: OriginalPost | undefined = someSuccessful ? {
+        content: content.trim(),
+        truncatedPreview: createTruncatedPreview(content.trim())
+      } : undefined
+
+      // Create post references for tracking replies
+      const postIds: PostReference[] = createPostReferences(result.results)
+
       addNotification({
         type: notificationType,
         title: notificationTitle,
         message: notificationMessage,
+        originalPost,
+        postIds: postIds.length > 0 ? postIds : undefined,
         postResults: result.results.map(r => ({
           platform: r.platform,
           success: r.success,

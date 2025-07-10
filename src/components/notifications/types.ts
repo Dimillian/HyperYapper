@@ -6,6 +6,27 @@ export interface Notification {
   message: string
   postResults?: PostResult[]
   isRead?: boolean
+  originalPost?: OriginalPost
+  postIds?: PostReference[]
+  replyCounts?: ReplyCount[]
+}
+
+export interface OriginalPost {
+  content: string
+  truncatedPreview: string
+}
+
+export interface PostReference {
+  platform: string
+  postId: string
+  postUri?: string // For Bluesky AT-URI
+}
+
+export interface ReplyCount {
+  platform: string
+  count: number
+  lastFetched: number
+  hasUnread: boolean
 }
 
 export interface PostResult {
@@ -22,6 +43,7 @@ export interface NotificationContextType {
   dismissNotification: (id: string) => void
   markAsRead: (id: string) => void
   clearAll: () => void
+  updateNotificationReplyCounts: (notificationId: string, replyCounts: ReplyCount[]) => void
 }
 
 export interface NotificationSidebarProps {

@@ -1,6 +1,6 @@
-import { X, CheckCircle, AlertCircle, ExternalLink, Clock } from 'lucide-react'
+import { X, CheckCircle, AlertCircle, ExternalLink, Clock, MessageCircle } from 'lucide-react'
 import { SiThreads, SiMastodon, SiBluesky } from 'react-icons/si'
-import { Notification } from './types'
+import { Notification, ReplyCount } from './types'
 
 interface NotificationCardProps {
   notification: Notification
@@ -58,6 +58,10 @@ export function NotificationCard({ notification, onDismiss, onMarkAsRead }: Noti
     }
   }
 
+  const getReplyCount = (platform: string): ReplyCount | undefined => {
+    return notification.replyCounts?.find(rc => rc.platform === platform)
+  }
+
   return (
     <div
       className={`p-3 rounded-lg border backdrop-blur-sm transition-all duration-200 ${getTypeColor()} ${
@@ -70,22 +74,37 @@ export function NotificationCard({ notification, onDismiss, onMarkAsRead }: Noti
         <div className="flex items-center gap-2 flex-1">
           {getTypeIcon()}
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2">
-              <h4 className="text-sm font-medium text-purple-100 truncate">
-                {notification.title}
-              </h4>
-              {!notification.isRead && (
-                <div className="w-2 h-2 bg-purple-400 rounded-full flex-shrink-0" />
-              )}
-            </div>
-            <p className="text-xs text-purple-300/80 mt-1">
-              {notification.message}
-            </p>
-            <div className="flex items-center gap-2 mt-1">
-              <span className="text-xs text-purple-400/60">
-                {formatTime(notification.timestamp)}
-              </span>
-            </div>
+            {notification.type === 'success' ? (
+              // Success notifications: only show time and unread indicator
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-purple-400/60">
+                  {formatTime(notification.timestamp)}
+                </span>
+                {!notification.isRead && (
+                  <div className="w-2 h-2 bg-purple-400 rounded-full flex-shrink-0" />
+                )}
+              </div>
+            ) : (
+              // Error notifications: show full title and message
+              <>
+                <div className="flex items-center gap-2">
+                  <h4 className="text-sm font-medium text-purple-100 truncate">
+                    {notification.title}
+                  </h4>
+                  {!notification.isRead && (
+                    <div className="w-2 h-2 bg-purple-400 rounded-full flex-shrink-0" />
+                  )}
+                </div>
+                <p className="text-xs text-purple-300/80 mt-1">
+                  {notification.message}
+                </p>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className="text-xs text-purple-400/60">
+                    {formatTime(notification.timestamp)}
+                  </span>
+                </div>
+              </>
+            )}
           </div>
         </div>
         <button
@@ -98,6 +117,15 @@ export function NotificationCard({ notification, onDismiss, onMarkAsRead }: Noti
           <X className="w-3 h-3 text-purple-400/60 hover:text-purple-300" />
         </button>
       </div>
+
+      {/* Post Preview */}
+      {notification.originalPost && (
+        <div className="mt-2 p-2 bg-black/20 rounded border border-purple-400/10">
+          <div className="text-xs text-purple-300/80 font-medium mb-1">Original Post:</div>
+          <div className="text-xs text-purple-200 leading-relaxed whitespace-pre-wrap">
+            {notification.originalPost.truncatedPreview}</div>
+        </div>
+      )}
 
       {/* Post Results */}
       {notification.postResults && notification.postResults.length > 0 && (
@@ -116,6 +144,23 @@ export function NotificationCard({ notification, onDismiss, onMarkAsRead }: Noti
                 <span className="text-xs text-purple-200 capitalize">
                   {result.platform}
                 </span>
+                
+                {/* Reply count badge */}
+                {result.success && (() => {
+                  const replyCount = getReplyCount(result.platform)
+                  if (replyCount && replyCount.count > 0) {
+                    return (
+                      <div className="flex items-center gap-1 px-1.5 py-0.5 bg-purple-500/20 rounded text-xs">
+                        <MessageCircle className="w-2.5 h-2.5 text-purple-300" />
+                        <span className={`text-purple-200 font-medium ${replyCount.hasUnread ? 'text-green-300' : ''}`}>
+                          {replyCount.count}
+                        </span>
+                      </div>
+                    )
+                  }
+                  return null
+                })()}
+                
                 {result.error && (
                   <span className="text-xs text-red-300 truncate">
                     {result.error}

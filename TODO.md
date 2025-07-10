@@ -79,6 +79,11 @@
 - [x] Platform-specific icons in notifications instead of generic checkmarks
 - [x] BlueSky posting implementation with proper image aspect ratio support
 - [x] BlueSky account search API integration for mentions
+- [x] Reply count tracking for Mastodon with smart caching and background refresh
+- [x] Reply count badges in notification cards with unread indicators
+- [x] Manual refresh button for reply counts in notification sidebar
+- [x] Post content preview storage with truncated display (first 2 lines + "...")
+- [x] Notification card UI optimization (success notifications show only icon + time)
 - [ ] Queue management system
 - [ ] Retry failed posts
 - [ ] Post history tracking
@@ -233,6 +238,17 @@
 - [x] Proper SSR hydration handling
 - [x] Notification state management with React Context
 - [x] Timeline view of all posting activity
+- [x] Reply tracking infrastructure with service registry pattern
+- [x] Mastodon reply fetching via context API endpoint
+- [x] Smart caching system for reply counts with infinite persistence
+- [x] Background reply count refreshing when sidebar opens
+- [x] Reply count badges with unread indicators in notification cards
+- [x] Manual refresh functionality with visual loading states
+- [x] Post content storage with truncated preview display
+- [x] Optimized notification card layout (minimal text for success notifications)
+- [ ] Reply count tracking for Threads platform
+- [ ] Reply count tracking for Bluesky platform
+- [ ] Inline reply viewing and interaction
 
 ## 🐛 Known Issues
 - [x] ~~Threads API returns numeric post IDs but URLs use alphanumeric format~~ (Fixed: now links to user profile)
