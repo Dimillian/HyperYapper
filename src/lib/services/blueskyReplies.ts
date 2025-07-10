@@ -41,7 +41,7 @@ export class BlueskyReplyFetcher implements ReplyFetcher {
   }
   
   /**
-   * Make authenticated request to Bluesky API
+   * Make authenticated request to Bluesky API using OAuth client
    */
   private async makeRequest(endpoint: string, params: Record<string, string> = {}): Promise<any> {
     const session = this.getBlueskySession()
@@ -49,27 +49,31 @@ export class BlueskyReplyFetcher implements ReplyFetcher {
       throw new Error('No Bluesky session found')
     }
 
-    // Use the stored JWT token for authentication
-    const accessToken = session.accessJwt
-    if (!accessToken) {
-      throw new Error('No access token available')
+    // Import and use the OAuth client to make authenticated requests
+    const { BlueSkyAuth } = await import('@/lib/auth/bluesky')
+    const client = await BlueSkyAuth.initializeOAuthClient()
+    
+    // Restore the OAuth session for the user's DID
+    const oauthSession = await client.restore(session.did)
+    if (!oauthSession) {
+      throw new Error('Could not restore OAuth session')
     }
 
     // Build URL with query parameters
-    const url = new URL(`https://bsky.social/xrpc/${endpoint}`)
+    const url = `/xrpc/${endpoint}`
+    const urlWithParams = new URL(url, 'https://bsky.social')
     Object.entries(params).forEach(([key, value]) => {
-      url.searchParams.append(key, value)
+      urlWithParams.searchParams.append(key, value)
     })
 
-    const response = await fetch(url.toString(), {
-      headers: {
-        'Authorization': `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
-      },
+    // Use the OAuth session's fetchHandler which handles authentication automatically
+    const response = await oauthSession.fetchHandler(urlWithParams.pathname + urlWithParams.search, {
+      method: 'GET'
     })
     
     if (!response.ok) {
-      throw new Error(`Bluesky API error: ${response.status} ${response.statusText}`)
+      const errorText = await response.text()
+      throw new Error(`Bluesky API error: ${response.status} ${response.statusText} - ${errorText}`)
     }
     
     return response.json()
@@ -81,29 +85,20 @@ export class BlueskyReplyFetcher implements ReplyFetcher {
    */
   async fetchReplyCount(postRef: PostReference): Promise<ReplyFetchResult> {
     try {
-      console.log('Bluesky fetchReplyCount called with postRef:', postRef)
-      
       // For Bluesky, we need to use the postUri (AT-URI) to get the post
       if (!postRef.postUri) {
-        console.error('Missing postUri for Bluesky post:', postRef)
         throw new Error('Bluesky post URI is required for reply fetching')
       }
-
-      console.log('Fetching Bluesky thread for URI:', postRef.postUri)
 
       // Fetch the thread to get top-level replies and count them
       const thread = await this.makeRequest('app.bsky.feed.getPostThread', {
         uri: postRef.postUri,
         depth: '1' // Only top-level replies
       })
-
-      console.log('Bluesky thread response:', thread)
       
       // Count the replies in the thread
       const replies = thread.thread?.replies || []
       const replyCount = replies.length
-      
-      console.log('Bluesky replies found:', replyCount, replies)
       
       // For now, we'll consider all replies as "unread" since we don't have 
       // a mechanism to track read state yet
@@ -149,13 +144,13 @@ export class BlueskyReplyFetcher implements ReplyFetcher {
       // Convert to our Reply format and limit results
       return replies.slice(0, limit).map((reply: any) => ({
         id: reply.post.uri,
-        content: reply.post.value.text,
+        content: reply.post.record.text,
         author: {
           username: reply.post.author.handle,
           displayName: reply.post.author.displayName || reply.post.author.handle,
           avatar: reply.post.author.avatar || ''
         },
-        timestamp: new Date(reply.post.value.createdAt).getTime(),
+        timestamp: new Date(reply.post.record.createdAt).getTime(),
         url: `https://bsky.app/profile/${reply.post.author.handle}/post/${reply.post.uri.split('/').pop()}`
       }))
       
