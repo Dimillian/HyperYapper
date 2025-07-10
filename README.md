@@ -1,23 +1,27 @@
 # HyperYapper ⚡💬
 
-> The ultimate social media posting app for yapping like a crazy motherfucker
+> Unleash your inner chaos. Post everywhere at once. Maximum yapping efficiency for social media addicts.
 
-HyperYapper is a beautiful, cyberpunk-styled cross-posting application that lets you craft perfect posts and share them across Threads, Mastodon, and BlueSky simultaneously. Built for content creators who want to maximize their reach with style.
+HyperYapper is a beautiful, cyberpunk-styled cross-posting application that lets you craft perfect posts and share them across Threads, Mastodon, and Bluesky simultaneously. Built for content creators who want to maximize their reach with style.
 
 ## ✨ Features
 
 ### 🚀 Current Features
 - **Beautiful Post Editor**: Clean, distraction-free writing experience with modular architecture
 - **Syntax Highlighting**: @mentions and #hashtags glow with cyberpunk purple effects
-- **Smart Mention Autocomplete**: Real-time account search for Mastodon and BlueSky with keyboard navigation
-- **Cross-Platform Posting**: Post to Threads, Mastodon, and BlueSky simultaneously
-- **BlueSky Integration**: Full posting support with image aspect ratio optimization and mention autocomplete
+- **Smart Mention Autocomplete**: Real-time account search for Mastodon and Bluesky with keyboard navigation
+- **Cross-Platform Posting**: Post to Threads, Mastodon, and Bluesky simultaneously
+- **Bluesky Integration**: Full posting support with image aspect ratio optimization and mention autocomplete
 - **Platform Optimization**: Automatic formatting and character limits for each platform
 - **Media Support**: Upload images with drag-and-drop, paste, and file selection
 - **Image Hosting**: Cloudflare R2 integration with automatic cleanup after posting
 - **Smart Notifications**: Persistent notification timeline with post links, status tracking, and auto-collapse/expand
 - **Dark Theme**: Sleek black interface with neon purple accents and glass morphism
 - **Account Management**: Connect and manage multiple social accounts with OAuth flows
+- **Emoji Studio**: Browse and search system emojis by category with recently used tracking
+- **Emoji Shortcodes**: Type :shortcode: for autocomplete emoji suggestions (e.g., :smile:, :heart:)
+- **Random Taglines**: Dynamic homepage messaging that keeps the experience fresh
+- **Analytics**: Vercel Analytics integration for usage tracking and insights
 
 ### 🤖 AI-Powered Features (Coming Soon)
 - **Post Enhancement**: AI suggestions to make your posts more engaging
@@ -159,7 +163,7 @@ npm run dev
 
 Due to API access restrictions and limitations, X/Twitter support has been removed from HyperYapper.
 
-### BlueSky
+### Bluesky
 
 1. **OAuth Client Metadata**:
    - HyperYapper publishes client metadata at `/.well-known/oauth-client-metadata`
@@ -167,7 +171,7 @@ Due to API access restrictions and limitations, X/Twitter support has been remov
    - No developer portal setup required
 
 2. **Authentication Flow**:
-   - Users enter their BlueSky handle (e.g., `alice.bsky.social`)
+   - Users enter their Bluesky handle (e.g., `alice.bsky.social`)
    - OAuth flow handles authorization automatically
    - Supports both production and development environments
 
@@ -204,7 +208,7 @@ Due to API access restrictions and limitations, X/Twitter support has been remov
 - Content warnings
 - Custom emojis
 
-### BlueSky
+### Bluesky
 - 300 character posts with automatic optimization
 - Image uploads with aspect ratio preservation
 - Real-time mention autocomplete with account search
@@ -263,10 +267,10 @@ src/
 ├── components/
 │   ├── accountDropdown/    # Account management UI with full platform support
 │   ├── notifications/      # Smart notification system with timeline and auto-collapse
-│   ├── postComposer/      # Post creation interface with mention autocomplete for Mastodon and BlueSky
+│   ├── postComposer/      # Post creation interface with mention autocomplete for Mastodon and Bluesky
 │   └── *.tsx              # Other components
 ├── lib/
-│   ├── auth/              # OAuth implementations (Mastodon, Threads, BlueSky with AT Protocol)
+│   ├── auth/              # OAuth implementations (Mastodon, Threads, Bluesky with AT Protocol)
 │   ├── posting/           # Platform posting logic with image support and mention search APIs
 │   └── storage/           # Local storage utilities with SSR hydration
 └── types/                 # Shared TypeScript types

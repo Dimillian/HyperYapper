@@ -25,6 +25,13 @@
 - [x] BlueSky mention autocomplete and account search
 - [x] Fixed BlueSky image display (added aspect ratio for proper rendering)
 - [x] Removed X/Twitter platform support (API limitations)
+- [x] Added Vercel Analytics SDK for usage tracking
+- [x] Implemented emoji picker with category navigation and recently used tracking
+- [x] Added emoji shortcode autocomplete (type :shortcode: for suggestions)
+- [x] Fixed emoji shortcode dropdown positioning to appear below cursor
+- [x] Updated all "BlueSky" references to "Bluesky" for brand consistency
+- [x] Added random taglines system for dynamic homepage messaging
+- [x] Updated SEO description to be more engaging while staying professional
 
 ### Post Editor
 - [x] Basic text editor component
@@ -36,7 +43,7 @@
 - [x] Proper cursor positioning after mention selection
 - [ ] Rich text formatting (bold, italic, links)
 - [x] Character counter for each platform
-- [ ] Emoji picker integration
+- [x] Emoji picker integration with category browsing and emoji shortcode autocomplete
 - [ ] Draft auto-save functionality
 - [x] Media attachment support (images, drag-and-drop, paste)
 - [x] Post preview component (removed - was cluttering UI)
@@ -46,7 +53,7 @@
 
 ### Account Management
 - [x] Account connection interface
-- [ ] OAuth flow for X (Twitter)
+- [x] OAuth flow for X (Twitter) - REMOVED due to API limitations
 - [x] OAuth flow for Threads
 - [x] OAuth flow for Mastodon
 - [x] OAuth flow for BlueSky (AT Protocol with DPoP and PKCE)
@@ -69,6 +76,9 @@
 - [x] Mastodon account search API integration for mentions
 - [x] Proper error handling and user feedback
 - [x] Post status tracking with links to published posts
+- [x] Platform-specific icons in notifications instead of generic checkmarks
+- [x] BlueSky posting implementation with proper image aspect ratio support
+- [x] BlueSky account search API integration for mentions
 - [ ] Queue management system
 - [ ] Retry failed posts
 - [ ] Post history tracking

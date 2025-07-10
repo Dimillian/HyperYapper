@@ -2,7 +2,9 @@ import { RefObject } from 'react'
 import { PLATFORM_LIMITS } from './types'
 import { SyntaxHighlighter } from './SyntaxHighlighter'
 import { MentionDropdown } from './MentionDropdown'
+import { EmojiShortcodeDropdown } from './EmojiShortcodeDropdown'
 import { useMentionHandler } from './useMentionHandler'
+import { useEmojiShortcodeHandler } from './useEmojiShortcodeHandler'
 import { MastodonSession, BlueSkySession } from '@/types/auth'
 
 interface TextAreaProps {
@@ -39,16 +41,24 @@ export function TextArea({
 
   const {
     mentionState,
-    handleInput,
+    handleInput: handleMentionInput,
     handleMentionSelect,
     closeMentionDropdown,
     isSinglePlatform,
     mentionPlatform
   } = useMentionHandler(textareaRef, content, setContent, selectedPlatforms)
 
+  const {
+    shortcodeState,
+    handleInput: handleShortcodeInput,
+    handleShortcodeSelect,
+    closeShortcodeDropdown
+  } = useEmojiShortcodeHandler(textareaRef, content, setContent)
+
   const handleContentChange = (newContent: string) => {
     setContent(newContent)
-    handleInput(newContent)
+    handleMentionInput(newContent)
+    handleShortcodeInput(newContent)
   }
 
   return (
@@ -101,6 +111,15 @@ export function TextArea({
           onClose={closeMentionDropdown}
         />
       )}
+
+      {/* Emoji Shortcode Dropdown */}
+      <EmojiShortcodeDropdown
+        isVisible={shortcodeState.isVisible}
+        query={shortcodeState.query}
+        position={shortcodeState.position}
+        onSelect={handleShortcodeSelect}
+        onClose={closeShortcodeDropdown}
+      />
     </div>
   )
 }
