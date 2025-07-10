@@ -94,7 +94,7 @@ export class BlueskyReplyFetcher implements ReplyFetcher {
       // Fetch the thread to get top-level replies and count them
       const thread = await this.makeRequest('app.bsky.feed.getPostThread', {
         uri: postRef.postUri,
-        depth: 1 // Only top-level replies
+        depth: '1' // Only top-level replies
       })
 
       console.log('Bluesky thread response:', thread)
@@ -141,7 +141,7 @@ export class BlueskyReplyFetcher implements ReplyFetcher {
       // Get top-level replies
       const thread = await this.makeRequest('app.bsky.feed.getPostThread', {
         uri: postRef.postUri,
-        depth: 1
+        depth: '1'
       })
 
       const replies = thread.thread?.replies || []
