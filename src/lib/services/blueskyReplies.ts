@@ -81,10 +81,15 @@ export class BlueskyReplyFetcher implements ReplyFetcher {
    */
   async fetchReplyCount(postRef: PostReference): Promise<ReplyFetchResult> {
     try {
+      console.log('Bluesky fetchReplyCount called with postRef:', postRef)
+      
       // For Bluesky, we need to use the postUri (AT-URI) to get the post
       if (!postRef.postUri) {
+        console.error('Missing postUri for Bluesky post:', postRef)
         throw new Error('Bluesky post URI is required for reply fetching')
       }
+
+      console.log('Fetching Bluesky post data for URI:', postRef.postUri)
 
       // Get the post directly to read replyCount from metadata
       const postData = await this.makeRequest('com.atproto.repo.getRecord', {
@@ -93,8 +98,12 @@ export class BlueskyReplyFetcher implements ReplyFetcher {
         rkey: postRef.postUri.split('/').pop() || postRef.postId
       })
 
+      console.log('Bluesky post data received:', postData)
+
       // Use the replyCount from the post metadata directly
       const replyCount = postData.value?.replyCount || 0
+      
+      console.log('Bluesky reply count:', replyCount)
       
       // For now, we'll consider all replies as "unread" since we don't have 
       // a mechanism to track read state yet

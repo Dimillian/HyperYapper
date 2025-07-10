@@ -64,6 +64,15 @@ export function useReplyFetching({
       const cache = ReplyCache.getInstance()
       const notificationsToUpdate = getNotificationsNeedingReplyCounts()
       
+      console.log('Reply fetching started. Notifications to update:', notificationsToUpdate.length)
+      notificationsToUpdate.forEach((notif, index) => {
+        console.log(`Notification ${index + 1}:`, {
+          id: notif.id,
+          postIds: notif.postIds,
+          type: notif.type
+        })
+      })
+      
       let hasFreshFetches = false
       
       for (const notification of notificationsToUpdate) {
