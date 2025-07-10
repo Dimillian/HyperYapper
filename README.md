@@ -2,19 +2,20 @@
 
 > The ultimate social media posting app for yapping like a crazy motherfucker
 
-HyperYapper is a beautiful, cyberpunk-styled cross-posting application that lets you craft perfect posts and share them across X, Threads, Mastodon, and BlueSky simultaneously. Built for content creators who want to maximize their reach with style.
+HyperYapper is a beautiful, cyberpunk-styled cross-posting application that lets you craft perfect posts and share them across Threads, Mastodon, and BlueSky simultaneously. Built for content creators who want to maximize their reach with style.
 
 ## ✨ Features
 
 ### 🚀 Current Features
 - **Beautiful Post Editor**: Clean, distraction-free writing experience with modular architecture
 - **Syntax Highlighting**: @mentions and #hashtags glow with cyberpunk purple effects
-- **Smart Mention Autocomplete**: Real-time account search for Mastodon (single-platform mode)
-- **Cross-Platform Posting**: Post to Threads and Mastodon simultaneously (X and BlueSky auth ready, posting coming soon)
+- **Smart Mention Autocomplete**: Real-time account search for Mastodon and BlueSky with keyboard navigation
+- **Cross-Platform Posting**: Post to Threads, Mastodon, and BlueSky simultaneously
+- **BlueSky Integration**: Full posting support with image aspect ratio optimization and mention autocomplete
 - **Platform Optimization**: Automatic formatting and character limits for each platform
 - **Media Support**: Upload images with drag-and-drop, paste, and file selection
 - **Image Hosting**: Cloudflare R2 integration with automatic cleanup after posting
-- **Smart Notifications**: Persistent notification timeline with post links and status tracking
+- **Smart Notifications**: Persistent notification timeline with post links, status tracking, and auto-collapse/expand
 - **Dark Theme**: Sleek black interface with neon purple accents and glass morphism
 - **Account Management**: Connect and manage multiple social accounts with OAuth flows
 
@@ -31,6 +32,7 @@ HyperYapper is a beautiful, cyberpunk-styled cross-posting application that lets
 - **Video Tools**: Trim, caption, and optimize videos for each platform
 - **Meme Generator**: Quick meme creation with popular templates
 - **Brand Overlays**: Add consistent branding to all your media
+- **Emoji Picker**: Browse and search system emojis by category with recently used tracking
 
 ## 🎯 Why HyperYapper?
 
@@ -153,9 +155,9 @@ npm run dev
    - Account verification and connection status
    - Automatic token management
 
-### X (Twitter) - Coming Soon
+### X (Twitter) - Discontinued
 
-API access restrictions have made integration challenging. We're exploring alternative approaches.
+Due to API access restrictions and limitations, X/Twitter support has been removed from HyperYapper.
 
 ### BlueSky
 
@@ -179,13 +181,13 @@ API access restrictions have made integration challenging. We're exploring alter
    - Session persistence with proper SSR hydration
    - Account verification and connection status
 
-## 📱 Platform Support
+5. **Current Features**:
+   - Post creation with 300 character limit
+   - Image upload with automatic aspect ratio preservation
+   - Real-time mention autocomplete with account search
+   - Full integration with cross-posting interface
 
-### X (Twitter)
-- 280 character posts
-- Thread creation
-- Image/video uploads
-- Quote tweets
+## 📱 Platform Support
 
 ### Threads
 - 500 character posts
@@ -203,11 +205,12 @@ API access restrictions have made integration challenging. We're exploring alter
 - Custom emojis
 
 ### BlueSky
-- 300 character posts
+- 300 character posts with automatic optimization
+- Image uploads with aspect ratio preservation
+- Real-time mention autocomplete with account search
 - AT Protocol OAuth 2.0 authentication with DPoP and PKCE
 - Decentralized features with handle-based identity
 - Custom feeds and federated timeline
-- OAuth client metadata for seamless authorization
 
 ## 🎨 Design Philosophy
 
@@ -218,8 +221,9 @@ HyperYapper embraces a cyberpunk aesthetic with:
 - Smooth animations and transitions
 - Mobile-first responsive design with 44px touch targets
 - Accessibility-first approach with proper contrast
-- Persistent notification sidebar for activity tracking
+- Persistent notification sidebar with auto-collapse/expand and activity tracking
 - Modular component architecture for maintainability
+- Smart notification management with timeline view and dismissible cards
 
 ## 🤝 Contributing
 
@@ -257,14 +261,14 @@ src/
 ├── app/                    # Next.js app router
 │   └── api/               # API routes (media upload/delete)
 ├── components/
-│   ├── accountDropdown/    # Account management UI with BlueSky support
-│   ├── notifications/      # Notification system
-│   ├── postComposer/      # Post creation interface with mention autocomplete
+│   ├── accountDropdown/    # Account management UI with full platform support
+│   ├── notifications/      # Smart notification system with timeline and auto-collapse
+│   ├── postComposer/      # Post creation interface with mention autocomplete for Mastodon and BlueSky
 │   └── *.tsx              # Other components
 ├── lib/
-│   ├── auth/              # OAuth implementations (Mastodon, Threads, BlueSky)
-│   ├── posting/           # Platform posting logic with search APIs
-│   └── storage/           # Local storage utilities
+│   ├── auth/              # OAuth implementations (Mastodon, Threads, BlueSky with AT Protocol)
+│   ├── posting/           # Platform posting logic with image support and mention search APIs
+│   └── storage/           # Local storage utilities with SSR hydration
 └── types/                 # Shared TypeScript types
 ```
 
