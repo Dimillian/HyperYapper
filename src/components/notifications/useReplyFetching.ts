@@ -52,8 +52,9 @@ export function useReplyFetching({
     setState(prev => ({ ...prev, isFetching: true, error: null }))
     
     try {
-      // Import the Mastodon reply fetcher to ensure it's registered
+      // Import reply fetchers to ensure they're registered
       await import('@/lib/services/mastodonReplies')
+      await import('@/lib/services/blueskyReplies')
       
       const replyService = getReplyFetcherService()
       const cache = ReplyCache.getInstance()

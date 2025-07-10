@@ -25,10 +25,6 @@ interface MastodonStatus {
   favourites_count: number
 }
 
-interface MastodonContext {
-  ancestors: MastodonStatus[]
-  descendants: MastodonStatus[]
-}
 
 export class MastodonReplyFetcher implements ReplyFetcher {
   private sessionManager = SessionManager.getInstance()
@@ -68,37 +64,6 @@ export class MastodonReplyFetcher implements ReplyFetcher {
     return response.json()
   }
   
-  /**
-   * Convert Mastodon status to our Reply interface
-   */
-  private convertStatusToReply(status: MastodonStatus): Reply {
-    return {
-      id: status.id,
-      content: this.stripHtmlTags(status.content),
-      author: {
-        username: status.account.acct,
-        displayName: status.account.display_name || status.account.username,
-        avatar: status.account.avatar_static || status.account.avatar
-      },
-      timestamp: new Date(status.created_at).getTime(),
-      url: status.url
-    }
-  }
-  
-  /**
-   * Strip HTML tags from content for plain text preview
-   */
-  private stripHtmlTags(html: string): string {
-    // Create a temporary div to parse HTML
-    if (typeof window !== 'undefined') {
-      const temp = document.createElement('div')
-      temp.innerHTML = html
-      return temp.textContent || temp.innerText || ''
-    }
-    
-    // Fallback for server-side: basic HTML tag removal
-    return html.replace(/<[^>]*>/g, '').trim()
-  }
   
   /**
    * Fetch reply count for a specific Mastodon post
@@ -110,14 +75,15 @@ export class MastodonReplyFetcher implements ReplyFetcher {
     }
     
     try {
-      // Fetch the context (replies) for the post
-      const context: MastodonContext = await this.makeRequest(
+      // Get the post directly to read replies_count from metadata
+      const status: MastodonStatus = await this.makeRequest(
         session.instance,
-        `/statuses/${postRef.postId}/context`,
+        `/statuses/${postRef.postId}`,
         session.accessToken
       )
       
-      const replyCount = context.descendants.length
+      // Use the replies_count from the post metadata directly
+      const replyCount = status.replies_count || 0
       
       // For now, we'll consider all replies as "unread" since we don't have 
       // a mechanism to track read state yet
@@ -128,7 +94,7 @@ export class MastodonReplyFetcher implements ReplyFetcher {
         postId: postRef.postId,
         count: replyCount,
         hasUnread,
-        replies: context.descendants.slice(0, 5).map(status => this.convertStatusToReply(status)) // Include first 5 replies for preview
+        replies: [] // No need to fetch actual replies for count-only operation
       }
     } catch (error) {
       console.error('Error fetching Mastodon reply count:', error)
@@ -153,18 +119,24 @@ export class MastodonReplyFetcher implements ReplyFetcher {
     }
     
     try {
-      const context: MastodonContext = await this.makeRequest(
+      const context = await this.makeRequest(
         session.instance,
         `/statuses/${postRef.postId}/context`,
         session.accessToken
       )
       
       // Convert descendants to our Reply format
-      const replies = context.descendants
-        .slice(0, limit)
-        .map(status => this.convertStatusToReply(status))
-      
-      return replies
+      return (context.descendants || []).slice(0, limit).map((status: MastodonStatus) => ({
+        id: status.id,
+        content: status.content.replace(/<[^>]*>/g, '').trim(), // Strip HTML tags
+        author: {
+          username: status.account.acct,
+          displayName: status.account.display_name || status.account.username,
+          avatar: status.account.avatar_static || status.account.avatar
+        },
+        timestamp: new Date(status.created_at).getTime(),
+        url: status.url
+      }))
     } catch (error) {
       console.error('Error fetching Mastodon replies:', error)
       throw error

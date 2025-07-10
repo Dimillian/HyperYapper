@@ -15,7 +15,7 @@ HyperYapper is a beautiful, cyberpunk-styled cross-posting application that lets
 - **Platform Optimization**: Automatic formatting and character limits for each platform
 - **Media Support**: Upload images with drag-and-drop, paste, and file selection
 - **Image Hosting**: Cloudflare R2 integration with automatic cleanup after posting
-- **Smart Notifications**: Persistent notification timeline with post links, status tracking, auto-collapse/expand, and reply count tracking
+- **Smart Notifications**: Persistent notification timeline with post links, status tracking, auto-collapse/expand, and optimized reply count tracking
 - **Dark Theme**: Sleek black interface with neon purple accents and glass morphism
 - **Account Management**: Connect and manage multiple social accounts with OAuth flows
 - **Emoji Studio**: Browse and search system emojis by category with recently used tracking
@@ -189,6 +189,7 @@ Due to API access restrictions and limitations, X/Twitter support has been remov
    - Post creation with 300 character limit
    - Image upload with automatic aspect ratio preservation
    - Real-time mention autocomplete with account search
+   - Reply count tracking via AT Protocol (top-level replies only)
    - Full integration with cross-posting interface
 
 ## 📱 Platform Support
@@ -213,6 +214,7 @@ Due to API access restrictions and limitations, X/Twitter support has been remov
 - 300 character posts with automatic optimization
 - Image uploads with aspect ratio preservation
 - Real-time mention autocomplete with account search
+- Reply count tracking with AT Protocol integration (top-level replies)
 - AT Protocol OAuth 2.0 authentication with DPoP and PKCE
 - Decentralized features with handle-based identity
 - Custom feeds and federated timeline
