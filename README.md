@@ -1,5 +1,7 @@
 # HyperYapper ⚡💬
 
+![HyperYapper Interface](yap.png)
+
 > Unleash your inner chaos. Post everywhere at once. Maximum yapping efficiency for social media addicts.
 
 HyperYapper is a beautiful, cyberpunk-styled cross-posting application that lets you craft perfect posts and share them across Threads, Mastodon, and Bluesky simultaneously. Built for content creators who want to maximize their reach with style.
