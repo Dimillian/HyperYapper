@@ -31,7 +31,7 @@ const createPostReferences = (results: any[]): PostReference[] => {
     .map(r => ({
       platform: r.platform,
       postId: r.postId,
-      postUri: r.postUri || undefined // For Bluesky AT-URI
+      postUri: r.platform === 'bluesky' ? r.postId : undefined // For Bluesky, postId is the AT-URI
     }))
 }
 

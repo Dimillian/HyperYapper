@@ -34,23 +34,25 @@ export class ThreadsReplyFetcher implements ReplyFetcher {
   }
   
   /**
-   * Make authenticated request to Threads API
+   * Make authenticated request to Threads API via our server-side proxy
    */
-  private async makeRequest(endpoint: string): Promise<any> {
+  private async makeRequest(postId: string, fields: string = 'id'): Promise<any> {
     const session = this.getThreadsSession()
     if (!session) {
       throw new Error('No Threads session found')
     }
 
-    const response = await fetch(`https://graph.threads.net/v1.0/${endpoint}`, {
-      headers: {
-        'Authorization': `Bearer ${session.accessToken}`,
-        'Content-Type': 'application/json'
-      }
-    })
+    // Use our API route to avoid CORS issues
+    const url = new URL('/api/threads/replies', window.location.origin)
+    url.searchParams.set('postId', postId)
+    url.searchParams.set('accessToken', session.accessToken)
+    url.searchParams.set('fields', fields)
+
+    const response = await fetch(url.toString())
 
     if (!response.ok) {
-      throw new Error(`Threads API error: ${response.status} ${response.statusText}`)
+      const errorData = await response.json().catch(() => ({}))
+      throw new Error(errorData.error || `API error: ${response.status} ${response.statusText}`)
     }
 
     return response.json()
@@ -62,9 +64,7 @@ export class ThreadsReplyFetcher implements ReplyFetcher {
   async fetchReplyCount(postRef: PostReference): Promise<ReplyFetchResult> {
     try {
       // Fetch replies to count them
-      const response = await this.makeRequest(
-        `${postRef.postId}/replies?fields=id`
-      )
+      const response = await this.makeRequest(postRef.postId, 'id')
 
       // Count the replies in the response
       const replyCount = response.data ? response.data.length : 0
@@ -100,7 +100,8 @@ export class ThreadsReplyFetcher implements ReplyFetcher {
     try {
       // Get top-level replies with full data
       const response = await this.makeRequest(
-        `${postRef.postId}/replies?fields=id,text,timestamp,username,permalink`
+        postRef.postId,
+        'id,text,timestamp,username,permalink'
       )
 
       const replies = response.data || []

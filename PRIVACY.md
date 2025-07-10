@@ -38,6 +38,7 @@ When you connect social media accounts:
 - OAuth authentication flows occur directly between your browser and social media platforms
 - Posted content is transmitted directly from your browser to the respective social media platforms
 - **Media Storage for Threads**: Images posted to Threads are temporarily stored on Cloudflare R2 (our media hosting service) because Threads requires publicly accessible URLs for media attachments. These images are automatically deleted immediately after successful posting and are not accessed, analyzed, or stored permanently by us.
+- **Threads Reply Fetching**: Threads reply count requests are proxied through our server to avoid browser CORS restrictions. Your access token is temporarily used server-side to make the API request, but is never stored or logged on our servers.
 
 ## Your Rights and Control
 
@@ -71,6 +72,14 @@ We rely on the security measures of connected social media platforms for:
 - Content posting
 - Token management and expiration
 
+### Server-Side Processing (Minimal)
+Our servers only handle:
+- **Threads API Proxy**: Proxying Threads reply count requests to avoid CORS restrictions
+  - Access tokens are used in-memory for the request duration only
+  - No tokens or request data are logged or stored
+  - Requests are processed and immediately discarded
+- **Media Upload for Threads**: Temporary image hosting as described above
+
 ## Contact Information
 
 If you have questions about this Privacy Policy, please:
@@ -83,11 +92,14 @@ If you have questions about this Privacy Policy, please:
 - ✅ No server-side data storage (except temporary media for Threads)
 - ✅ No tracking or analytics
 - ✅ Local-only data storage
-- ✅ Direct platform communication
+- ✅ Direct platform communication (except CORS-restricted Threads API)
 - ✅ Full user control over data
 - ✅ No data collection or mining
 - ✅ Automatic media deletion after posting
+- ✅ Minimal server processing (proxy only, no storage)
 
-**Note on Threads Media**: The only exception to our no-server-storage policy is temporary image hosting for Threads posts. This is required because Threads needs publicly accessible URLs for media attachments. Images are automatically deleted immediately after successful posting and are never analyzed or stored permanently.
+**Server-Side Exceptions**: 
+1. **Threads Media**: Temporary image hosting for Threads posts (automatically deleted after posting)
+2. **Threads API Proxy**: Server-side proxy for reply count requests due to CORS restrictions (no data stored, access tokens used in-memory only)
 
 Your privacy is not a feature we added – it's the foundation of how HyperYapper was built.
