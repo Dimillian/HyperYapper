@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { PostEditor } from '@/components/postComposer'
 import { AccountDropdown } from '@/components/accountDropdown'
 import Footer from '@/components/Footer'
@@ -28,7 +28,7 @@ const TAGLINES = [
 
 export default function Home() {
   const { notifications, dismissNotification, markAsRead, clearAll } = useNotifications()
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true)
   const [currentTagline, setCurrentTagline] = useState(TAGLINES[0])
   
   // Handle OAuth callbacks
@@ -39,6 +39,48 @@ export default function Home() {
     const randomTagline = TAGLINES[Math.floor(Math.random() * TAGLINES.length)]
     setCurrentTagline(randomTagline)
   }, [])
+  
+  // Track the previous notification count and initial load
+  const prevNotificationCountRef = useRef(notifications.length)
+  const isInitialLoadRef = useRef(true)
+  
+  // Open sidebar when new notification is added (but not on initial load)
+  useEffect(() => {
+    const currentCount = notifications.length
+    const prevCount = prevNotificationCountRef.current
+    const unreadCount = notifications.filter(n => !n.isRead).length
+    
+    // Skip auto-open on initial load
+    if (isInitialLoadRef.current) {
+      isInitialLoadRef.current = false
+      prevNotificationCountRef.current = currentCount
+      return
+    }
+    
+    // If notification count increased and there are unread notifications, open the sidebar
+    if (currentCount > prevCount && unreadCount > 0 && isSidebarCollapsed) {
+      setIsSidebarCollapsed(false)
+    }
+    
+    // Update the ref for next comparison
+    prevNotificationCountRef.current = currentCount
+  }, [notifications.length, notifications, isSidebarCollapsed])
+  
+  // Mark all notifications as read when sidebar is open
+  useEffect(() => {
+    if (!isSidebarCollapsed) {
+      // Small delay to allow the sidebar animation to start
+      const timer = setTimeout(() => {
+        notifications.forEach(n => {
+          if (!n.isRead) {
+            markAsRead(n.id)
+          }
+        })
+      }, 300)
+      
+      return () => clearTimeout(timer)
+    }
+  }, [isSidebarCollapsed, notifications, markAsRead])
   
   return (
     <div className="min-h-screen bg-black flex flex-col">
