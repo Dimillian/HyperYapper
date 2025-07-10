@@ -7,21 +7,13 @@ HyperYapper is a beautiful, cyberpunk-styled cross-posting application that lets
 ## ✨ Features
 
 ### 🚀 Current Features
-- **Beautiful Post Editor**: Clean, distraction-free writing experience with modular architecture
-- **Syntax Highlighting**: @mentions and #hashtags glow with cyberpunk purple effects
-- **Smart Mention Autocomplete**: Real-time account search for Mastodon and Bluesky with keyboard navigation
-- **Cross-Platform Posting**: Post to Threads, Mastodon, and Bluesky simultaneously
-- **Bluesky Integration**: Full posting support with image aspect ratio optimization and mention autocomplete
-- **Platform Optimization**: Automatic formatting and character limits for each platform
-- **Media Support**: Upload images with drag-and-drop, paste, and file selection
-- **Image Hosting**: Cloudflare R2 integration with automatic cleanup after posting
-- **Smart Notifications**: Persistent notification timeline with post links, status tracking, auto-collapse/expand, and optimized reply count tracking
-- **Dark Theme**: Sleek black interface with neon purple accents and glass morphism
-- **Account Management**: Connect and manage multiple social accounts with OAuth flows
-- **Emoji Studio**: Browse and search system emojis by category with recently used tracking
-- **Emoji Shortcodes**: Type :shortcode: for autocomplete emoji suggestions (e.g., :smile:, :heart:)
-- **Random Taglines**: Dynamic homepage messaging that keeps the experience fresh
-- **Analytics**: Vercel Analytics integration for usage tracking and insights
+- **Cross-Platform Posting**: Post to Threads, Mastodon, and Bluesky simultaneously with automatic formatting
+- **Smart Post Editor**: Syntax highlighting for @mentions/#hashtags, real-time mention autocomplete, emoji picker with shortcodes
+- **Media Support**: Image uploads with drag-and-drop, Cloudflare R2 hosting, automatic cleanup
+- **Smart Notifications**: Persistent timeline with reply count tracking, post links, and status monitoring
+- **Account Management**: OAuth authentication for all platforms with connection status indicators
+- **Cyberpunk Design**: Dark theme with neon purple accents, glass morphism, and responsive layout
+- **Analytics**: Usage tracking and insights with Vercel Analytics
 
 ### 🤖 AI-Powered Features (Coming Soon)
 - **Post Enhancement**: AI suggestions to make your posts more engaging
@@ -36,7 +28,6 @@ HyperYapper is a beautiful, cyberpunk-styled cross-posting application that lets
 - **Video Tools**: Trim, caption, and optimize videos for each platform
 - **Meme Generator**: Quick meme creation with popular templates
 - **Brand Overlays**: Add consistent branding to all your media
-- **Emoji Picker**: Browse and search system emojis by category with recently used tracking
 
 ## 🎯 Why HyperYapper?
 
@@ -156,10 +147,7 @@ npm run dev
    - Public posts up to 500 characters (instance-dependent)
    - Image uploads with media processing
    - Real-time @mention autocomplete with account search
-   - Full Mastodon mention format (@username@instance.domain)
-   - Optimized reply count tracking via direct API metadata
-   - Account verification and connection status
-   - Automatic token management
+   - Reply count tracking and account verification
 
 ### X (Twitter) - Discontinued
 
@@ -190,50 +178,35 @@ Due to API access restrictions and limitations, X/Twitter support has been remov
 5. **Current Features**:
    - Post creation with 300 character limit
    - Image upload with automatic aspect ratio preservation
-   - Real-time mention autocomplete with account search
-   - Optimized reply count tracking via AT Protocol metadata (direct API access)
-   - Full integration with cross-posting interface
+   - Real-time mention autocomplete and reply count tracking
 
 ## 📱 Platform Support
 
 ### Threads
-- 500 character posts
-- Single image per post (via Cloudflare R2)
-- Instagram integration
-- Link sharing
-- Profile links in success notifications
-- Reply count tracking with Graph API integration
+- 500 character posts with single image support (Cloudflare R2)
+- Instagram integration and profile links
+- Reply count tracking via Graph API
 
 ### Mastodon
-- 500+ characters (instance-dependent)
-- Image uploads with polling-based processing
-- Real-time @mention autocomplete with account search
+- 500+ characters (instance-dependent) with image uploads
 - Full federation support (@username@instance.domain)
-- Optimized reply count tracking with automatic refresh (direct metadata API)
-- Content warnings
-- Custom emojis
+- Real-time mention autocomplete and reply count tracking
+- Content warnings and custom emojis
 
 ### Bluesky
-- 300 character posts with automatic optimization
-- Image uploads with aspect ratio preservation
-- Real-time mention autocomplete with account search
-- Optimized reply count tracking via AT Protocol metadata (direct API access)
-- AT Protocol OAuth 2.0 authentication with DPoP and PKCE
+- 300 character posts with image aspect ratio optimization
+- AT Protocol OAuth 2.0 with DPoP and PKCE security
+- Real-time mention autocomplete and reply count tracking
 - Decentralized features with handle-based identity
-- Custom feeds and federated timeline
 
 ## 🎨 Design Philosophy
 
 HyperYapper embraces a cyberpunk aesthetic with:
-- Pure black backgrounds for OLED displays
-- Neon purple accents (#8B5CF6, #A855F7) with glow effects
-- Glass morphism effects with backdrop blur
-- Smooth animations and transitions
-- Mobile-first responsive design with 44px touch targets
-- Accessibility-first approach with proper contrast
-- Persistent notification sidebar with auto-collapse/expand and activity tracking
-- Modular component architecture for maintainability
-- Smart notification management with timeline view and dismissible cards
+- Pure black backgrounds with neon purple accents (#8B5CF6, #A855F7)
+- Glass morphism effects and smooth animations
+- Mobile-first responsive design with accessibility focus
+- Modular component architecture
+- Smart notification management with timeline view
 
 ## 🤝 Contributing
 
