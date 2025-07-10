@@ -33,14 +33,17 @@ export function useReplyFetching({
   const fetchTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined)
   
   /**
-   * Get notifications that need reply count updates
+   * Get notifications that need reply count updates (limited to first 20)
    */
   const getNotificationsNeedingReplyCounts = (): Notification[] => {
-    return notifications.filter(notification => 
-      notification.postIds && 
-      notification.postIds.length > 0 &&
-      notification.type === 'success' // Only fetch for successful posts
-    )
+    return notifications
+      .sort((a, b) => b.timestamp - a.timestamp) // Sort by newest first (same as UI)
+      .slice(0, 20) // Limit to first 20 notifications
+      .filter(notification => 
+        notification.postIds && 
+        notification.postIds.length > 0 &&
+        notification.type === 'success' // Only fetch for successful posts
+      )
   }
   
   /**
