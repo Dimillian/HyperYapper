@@ -89,41 +89,21 @@ export class BlueskyReplyFetcher implements ReplyFetcher {
         throw new Error('Bluesky post URI is required for reply fetching')
       }
 
-      console.log('Fetching Bluesky post data for URI:', postRef.postUri)
+      console.log('Fetching Bluesky thread for URI:', postRef.postUri)
 
-      // Use the feed API to get post with social metadata (like reply counts)
-      const feedResponse = await this.makeRequest('app.bsky.feed.getPosts', {
-        uris: postRef.postUri
+      // Fetch the thread to get top-level replies and count them
+      const thread = await this.makeRequest('app.bsky.feed.getPostThread', {
+        uri: postRef.postUri,
+        depth: 1 // Only top-level replies
       })
 
-      console.log('Bluesky feed response:', feedResponse)
-
-      if (!feedResponse.posts || feedResponse.posts.length === 0) {
-        console.log('No posts found in feed response, falling back to thread fetch')
-        // Fallback to thread fetch
-        const thread = await this.makeRequest('app.bsky.feed.getPostThread', {
-          uri: postRef.postUri,
-          depth: '1'
-        })
-        console.log('Thread response:', thread)
-        const actualReplies = thread.thread?.replies || []
-        console.log('Thread replies found:', actualReplies.length)
-        
-        return {
-          platform: 'bluesky',
-          postId: postRef.postId,
-          count: actualReplies.length,
-          hasUnread: actualReplies.length > 0,
-          replies: []
-        }
-      }
-
-      const post = feedResponse.posts[0]
-      console.log('Post from feed:', post)
+      console.log('Bluesky thread response:', thread)
       
-      // Check for reply count in the post metadata
-      const replyCount = post.replyCount || 0
-      console.log('Bluesky reply count from feed:', replyCount)
+      // Count the replies in the thread
+      const replies = thread.thread?.replies || []
+      const replyCount = replies.length
+      
+      console.log('Bluesky replies found:', replyCount, replies)
       
       // For now, we'll consider all replies as "unread" since we don't have 
       // a mechanism to track read state yet
@@ -161,7 +141,7 @@ export class BlueskyReplyFetcher implements ReplyFetcher {
       // Get top-level replies
       const thread = await this.makeRequest('app.bsky.feed.getPostThread', {
         uri: postRef.postUri,
-        depth: '1'
+        depth: 1
       })
 
       const replies = thread.thread?.replies || []
