@@ -133,51 +133,55 @@ export function NotificationCard({ notification, onDismiss, onMarkAsRead }: Noti
           {notification.postResults.map((result, index) => (
             <div
               key={index}
-              className="flex items-center justify-between p-2 bg-black/20 rounded border border-purple-400/10"
+              className="p-2 bg-black/20 rounded border border-purple-400/10"
             >
-              <div className="flex items-center gap-2">
-                {result.success ? (
-                  getPlatformIcon(result.platform)
-                ) : (
-                  <AlertCircle className="w-3 h-3 text-red-400" />
-                )}
-                <span className="text-xs text-purple-200 capitalize">
-                  {result.platform}
-                </span>
-                
-                {/* Reply count badge */}
-                {result.success && (() => {
-                  const replyCount = getReplyCount(result.platform)
-                  if (replyCount && replyCount.count > 0) {
-                    return (
-                      <div className="flex items-center gap-1 px-1.5 py-0.5 bg-purple-500/20 rounded text-xs">
-                        <MessageCircle className="w-2.5 h-2.5 text-purple-300" />
-                        <span className={`text-purple-200 font-medium ${replyCount.hasUnread ? 'text-green-300' : ''}`}>
-                          {replyCount.count}
-                        </span>
-                      </div>
-                    )
-                  }
-                  return null
-                })()}
-                
-                {result.error && (
-                  <span className="text-xs text-red-300 truncate">
-                    {result.error}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1 flex-shrink-0">
+                    {getPlatformIcon(result.platform)}
+                    {!result.success && (
+                      <AlertCircle className="w-2 h-2 text-red-400" />
+                    )}
+                  </div>
+                  <span className="text-xs text-purple-200 capitalize flex-shrink-0">
+                    {result.platform}
                   </span>
+                  
+                  {/* Reply count badge */}
+                  {result.success && (() => {
+                    const replyCount = getReplyCount(result.platform)
+                    if (replyCount && replyCount.count > 0) {
+                      return (
+                        <div className="flex items-center gap-1 px-1.5 py-0.5 bg-purple-500/20 rounded text-xs flex-shrink-0">
+                          <MessageCircle className="w-2.5 h-2.5 text-purple-300" />
+                          <span className={`text-purple-200 font-medium ${replyCount.hasUnread ? 'text-green-300' : ''}`}>
+                            {replyCount.count}
+                          </span>
+                        </div>
+                      )
+                    }
+                    return null
+                  })()}
+                </div>
+                {result.postUrl && result.success && (
+                  <a
+                    href={result.postUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1 text-xs text-purple-300 hover:text-purple-200 transition-colors flex-shrink-0"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <ExternalLink className="w-3 h-3" />
+                    View
+                  </a>
                 )}
               </div>
-              {result.postUrl && result.success && (
-                <a
-                  href={result.postUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-1 text-xs text-purple-300 hover:text-purple-200 transition-colors"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <ExternalLink className="w-3 h-3" />
-                  View
-                </a>
+              
+              {/* Error message below service name - full width */}
+              {result.error && (
+                <div className="mt-2 text-xs text-red-300 leading-relaxed break-words">
+                  {result.error}
+                </div>
               )}
             </div>
           ))}
