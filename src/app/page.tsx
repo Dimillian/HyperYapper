@@ -5,6 +5,7 @@ import { PostEditor } from '@/components/postComposer'
 import { AccountDropdown } from '@/components/accountDropdown'
 import Footer from '@/components/Footer'
 import { NotificationSidebar, useNotifications } from '@/components/notifications'
+import { NotificationButton } from '@/components/notifications/NotificationButton'
 import { useOAuthCallback } from '@/hooks/useOAuthCallback'
 import { HyperYapperIcon } from '@/components/icons/HyperYapperIcon'
 
@@ -86,7 +87,7 @@ export default function Home() {
     <div className="min-h-screen bg-black flex flex-col">
       {/* Header */}
       <header className="border-b border-purple-300/40 bg-black/90 backdrop-blur-md sticky top-0 z-50 bright-glow">
-        <div className="max-w-6xl mx-auto px-4 py-4">
+        <div className="w-full px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <HyperYapperIcon 
@@ -96,8 +97,12 @@ export default function Home() {
               <h1 className="text-2xl font-bold cyberpunk-text">HyperYapper</h1>
             </div>
             
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
               <AccountDropdown />
+              <NotificationButton 
+                unreadCount={notifications.filter(n => !n.isRead).length}
+                onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+              />
             </div>
           </div>
         </div>

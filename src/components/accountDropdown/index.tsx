@@ -172,27 +172,27 @@ export function AccountDropdown() {
       {/* Trigger Button */}
       <button
         onClick={() => setState(prev => ({ ...prev, isOpen: !prev.isOpen }))}
-        className="flex items-center gap-2 px-3 py-2 bg-purple-500/30 hover:bg-purple-500/40 border border-purple-300/50 rounded-lg transition-all duration-200 neon-glow hover:neon-glow-strong"
+        className="relative flex items-center gap-2 p-0 sm:px-3 sm:py-2 w-10 h-10 sm:w-auto sm:h-auto bg-purple-500/30 hover:bg-purple-500/40 border border-purple-300/50 rounded-full sm:rounded-lg transition-all duration-200 neon-glow hover:neon-glow-strong justify-center sm:justify-start overflow-hidden"
       >
         {mastodonSession?.avatar ? (
           <img 
             src={mastodonSession.avatar} 
             alt={mastodonSession.displayName}
-            className="w-6 h-6 rounded-full border border-purple-300/40"
+            className="w-full h-full sm:w-6 sm:h-6 object-cover rounded-full sm:border sm:border-purple-300/40"
           />
         ) : threadsSession?.userInfo.profilePictureUrl ? (
           <img 
             src={threadsSession.userInfo.profilePictureUrl} 
             alt={threadsSession.userInfo.name}
-            className="w-6 h-6 rounded-full border border-purple-300/40"
+            className="w-full h-full sm:w-6 sm:h-6 object-cover rounded-full sm:border sm:border-purple-300/40"
           />
         ) : (
           <User className="w-5 h-5 text-purple-300" />
         )}
-        <span className="text-sm text-purple-100 font-medium">
+        <span className="text-sm text-purple-100 font-medium hidden sm:inline">
           {connectedCount > 0 ? `${connectedCount} connected` : 'Connect accounts'}
         </span>
-        <ChevronDown className={`w-4 h-4 text-purple-300 transition-transform ${state.isOpen ? 'rotate-180' : ''}`} />
+        <ChevronDown className={`w-4 h-4 text-purple-300 transition-transform hidden sm:inline-block ${state.isOpen ? 'rotate-180' : ''}`} />
       </button>
 
       {/* Dropdown Menu */}

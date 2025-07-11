@@ -38,25 +38,16 @@ export function NotificationSidebar({
           </button>
         )}
         
-        {/* Toggle Button - Always visible */}
-        <button
-          onClick={onToggleCollapse}
-          className={`w-10 h-10 bg-black/80 backdrop-blur-sm border border-purple-400/40 rounded-full flex items-center justify-center hover:bg-purple-500/20 transition-all duration-200 shadow-lg ${
-            isCollapsed && unreadCount > 0 ? 'animate-pulse' : ''
-          }`}
-          title={isCollapsed ? 'Show notifications' : 'Hide notifications'}
-        >
-          {isCollapsed ? (
-            <Bell className="w-4 h-4 text-purple-300" />
-          ) : (
+        {/* Close Button - Only show when sidebar is open */}
+        {!isCollapsed && (
+          <button
+            onClick={onToggleCollapse}
+            className="w-10 h-10 bg-black/80 backdrop-blur-sm border border-purple-400/40 rounded-full flex items-center justify-center hover:bg-purple-500/20 transition-all duration-200 shadow-lg"
+            title="Close notifications"
+          >
             <ChevronRight className="w-4 h-4 text-purple-300" />
-          )}
-          {isCollapsed && unreadCount > 0 && (
-            <span className="absolute -top-1 -right-1 w-5 h-5 bg-purple-500 text-white text-xs rounded-full flex items-center justify-center animate-bounce">
-              {unreadCount > 9 ? '9+' : unreadCount}
-            </span>
-          )}
-        </button>
+          </button>
+        )}
       </div>
 
       {/* Sidebar Panel */}
