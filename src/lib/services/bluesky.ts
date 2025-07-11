@@ -3,6 +3,7 @@
 import { BlueSkyAuth } from '@/lib/auth/bluesky'
 import { BlueSkySession } from '@/types/auth'
 import { Agent, RichText } from '@atproto/api'
+import { MetadataFetcher, LinkMetadata } from '@/lib/utils/metadataFetcher'
 
 export interface BlueSkyPost {
   text: string
@@ -15,6 +16,53 @@ export interface BlueSkyPostResponse {
 }
 
 export class BlueSkyService {
+  private static async createExternalEmbed(
+    agent: Agent,
+    url: string,
+    metadata: LinkMetadata
+  ): Promise<any> {
+    try {
+      let thumbBlob = null
+      
+      // Upload thumbnail image if available
+      if (metadata.image) {
+        try {
+          const response = await fetch(metadata.image)
+          if (response.ok) {
+            const arrayBuffer = await response.arrayBuffer()
+            const uint8Array = new Uint8Array(arrayBuffer)
+            
+            const uploadResponse = await agent.uploadBlob(uint8Array, {
+              encoding: response.headers.get('content-type') || 'image/jpeg',
+            })
+            
+            thumbBlob = uploadResponse.data.blob
+          }
+        } catch (error) {
+          console.warn('Failed to upload thumbnail image:', error)
+        }
+      }
+
+      const external: any = {
+        uri: url,
+        title: metadata.title || 'Untitled',
+        description: metadata.description || '',
+      }
+
+      if (thumbBlob) {
+        external.thumb = thumbBlob
+      }
+
+      return {
+        $type: 'app.bsky.embed.external',
+        external,
+      }
+    } catch (error) {
+      console.error('Error creating external embed:', error)
+      return null
+    }
+  }
+
   private static async getAgent(session: BlueSkySession): Promise<Agent | null> {
     try {
       // Get the OAuth client and restore session
@@ -51,12 +99,32 @@ export class BlueSkyService {
       const rt = new RichText({ text: post.text })
       await rt.detectFacets(agent)
 
+      // Extract URLs for external embeds
+      const urls = MetadataFetcher.extractUrls(post.text)
+      let embed = null
+
+      // Create external embed for the first URL found
+      if (urls.length > 0) {
+        const firstUrl = urls[0]
+        const metadata = await MetadataFetcher.fetchMetadata(firstUrl)
+        
+        if (metadata) {
+          embed = await this.createExternalEmbed(agent, firstUrl, metadata)
+        }
+      }
+
       // Create the post using the Agent
-      const response = await agent.post({
+      const postData: any = {
         text: rt.text,
         facets: rt.facets,
         createdAt: post.createdAt || new Date().toISOString(),
-      })
+      }
+
+      if (embed) {
+        postData.embed = embed
+      }
+
+      const response = await agent.post(postData)
 
       return {
         uri: response.uri,
@@ -287,11 +355,29 @@ export class BlueSkyService {
         const rt = new RichText({ text: post.text })
         await rt.detectFacets(agent)
 
+        // Extract URLs for external embeds
+        const urls = MetadataFetcher.extractUrls(post.text)
+        let embed = null
+
+        // Create external embed for the first URL found
+        if (urls.length > 0) {
+          const firstUrl = urls[0]
+          const metadata = await MetadataFetcher.fetchMetadata(firstUrl)
+          
+          if (metadata) {
+            embed = await this.createExternalEmbed(agent, firstUrl, metadata)
+          }
+        }
+
         // Build the post object
         const postData: any = {
           text: rt.text,
           facets: rt.facets,
           createdAt: post.createdAt || new Date().toISOString(),
+        }
+
+        if (embed) {
+          postData.embed = embed
         }
 
         // If this is a reply to the previous post in the thread
