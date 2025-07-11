@@ -37,6 +37,7 @@ export function NotificationProvider({ children }: NotificationProviderProps) {
     }
     
     setNotifications(prev => [newNotification, ...prev])
+    return newNotification
   }, [])
 
   const dismissNotification = useCallback((id: string) => {
@@ -91,13 +92,20 @@ export function NotificationProvider({ children }: NotificationProviderProps) {
     )
   }, [])
 
+  const updateNotification = useCallback((id: string, updates: Partial<Notification>) => {
+    setNotifications(prev => 
+      prev.map(n => n.id === id ? { ...n, ...updates } : n)
+    )
+  }, [])
+
   const value: NotificationContextType = {
     notifications,
     addNotification,
     dismissNotification,
     markAsRead,
     clearAll,
-    updateNotificationReplyCounts
+    updateNotificationReplyCounts,
+    updateNotification
   }
 
   return (

@@ -10,6 +10,7 @@ export interface PostResult {
   error?: string
   postId?: string
   postUrl?: string
+  status?: 'pending' | 'posting' | 'completed' | 'failed'
 }
 
 export interface PostStatus {

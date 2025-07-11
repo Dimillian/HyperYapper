@@ -44,7 +44,7 @@ export function PostEditor() {
   const [mastodonSession, setMastodonSession] = useState<MastodonSession | null>(null)
   const [blueSkySession, setBlueSkySession] = useState<BlueSkySession | null>(null)
   
-  const { addNotification } = useNotifications()
+  const { addNotification, updateNotification } = useNotifications()
   
   const fileInputRef = useRef<HTMLInputElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -120,13 +120,50 @@ export function PostEditor() {
     setIsPosting(true)
 
     try {
+      // Create initial notification with pending status
+      const initialResults: any[] = selectedPlatforms.map(platform => ({
+        platform,
+        success: false,
+        status: 'pending'
+      }))
+
+      const originalPost: OriginalPost = {
+        content: content.trim(),
+        truncatedPreview: createTruncatedPreview(content.trim())
+      }
+
+      const notification = addNotification({
+        type: 'info',
+        title: 'Posting...',
+        message: `Posting to ${selectedPlatforms.length} platform${selectedPlatforms.length > 1 ? 's' : ''}`,
+        originalPost,
+        postResults: initialResults
+      })
+
+      const notificationId = notification.id
+
+      // Post with progress updates
       const result = await PostService.postToAll({
         text: content.trim(),
         platforms: selectedPlatforms,
         images: attachedImages.map(img => img.file)
+      }, (platform: string, platformResult: any) => {
+        // Update the notification with progress
+        const updatedResults = initialResults.map(r => 
+          r.platform === platform ? platformResult : r
+        )
+        updateNotification(notificationId, {
+          postResults: updatedResults
+        })
+        // Update the local copy for next iteration
+        updatedResults.forEach((updated, index) => {
+          if (updated.platform === platform) {
+            initialResults[index] = updated
+          }
+        })
       })
 
-      // Create notification for the post results
+      // Final update - determine overall status
       const allSuccessful = result.results.every(r => r.success)
       const someSuccessful = result.results.some(r => r.success)
       
@@ -150,28 +187,16 @@ export function PostEditor() {
         notificationType = 'error'
       }
 
-      // Create original post data for successful posts
-      const originalPost: OriginalPost | undefined = someSuccessful ? {
-        content: content.trim(),
-        truncatedPreview: createTruncatedPreview(content.trim())
-      } : undefined
-
       // Create post references for tracking replies
       const postIds: PostReference[] = createPostReferences(result.results)
 
-      addNotification({
+      // Final notification update
+      updateNotification(notificationId, {
         type: notificationType,
         title: notificationTitle,
         message: notificationMessage,
-        originalPost,
         postIds: postIds.length > 0 ? postIds : undefined,
-        postResults: result.results.map(r => ({
-          platform: r.platform,
-          success: r.success,
-          postId: r.postId,
-          postUrl: r.postUrl,
-          error: r.error
-        }))
+        postResults: result.results
       })
 
       // If all posts were successful, clear the editor

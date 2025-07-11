@@ -5,14 +5,31 @@ import { BlueSkyPoster } from './bluesky'
 import { PostContent, PostResult, PostStatus } from '@/types/post'
 
 export class PostService {
-  static async postToAll(content: PostContent): Promise<PostStatus> {
+  static async postToAll(
+    content: PostContent, 
+    onProgress?: (platform: string, result: PostResult) => void
+  ): Promise<PostStatus> {
     const sessionManager = SessionManager.getInstance()
-    const results: PostResult[] = []
     const errors: string[] = []
 
-    // Post to each selected platform
-    for (const platform of content.platforms) {
+    // Create initial pending results for all platforms
+    const initialResults: PostResult[] = content.platforms.map(platform => ({
+      platform,
+      success: false,
+      status: 'pending'
+    }))
+
+    // Post to all platforms in parallel
+    const postPromises = content.platforms.map(async (platform): Promise<PostResult> => {
       try {
+        // Update status to posting
+        const postingResult: PostResult = {
+          platform,
+          success: false,
+          status: 'posting'
+        }
+        onProgress?.(platform, postingResult)
+
         let result: PostResult
 
         switch (platform) {
@@ -22,13 +39,14 @@ export class PostService {
               result = {
                 platform: 'mastodon',
                 success: false,
-                error: 'Mastodon account not connected'
+                error: 'Mastodon account not connected',
+                status: 'failed'
               }
             } else {
               result = await MastodonPoster.post(mastodonSession, content.text, content.images)
+              result.status = result.success ? 'completed' : 'failed'
             }
             break
-
 
           case 'threads':
             const threadsSession = sessionManager.getThreadsSession()
@@ -36,10 +54,12 @@ export class PostService {
               result = {
                 platform: 'threads',
                 success: false,
-                error: 'Threads account not connected'
+                error: 'Threads account not connected',
+                status: 'failed'
               }
             } else {
               result = await ThreadsPoster.post(threadsSession, content.text, content.images)
+              result.status = result.success ? 'completed' : 'failed'
             }
             break
 
@@ -49,10 +69,12 @@ export class PostService {
               result = {
                 platform: 'bluesky',
                 success: false,
-                error: 'BlueSky account not connected'
+                error: 'BlueSky account not connected',
+                status: 'failed'
               }
             } else {
               result = await BlueSkyPoster.post(blueSkySession, content.text, content.images)
+              result.status = result.success ? 'completed' : 'failed'
             }
             break
 
@@ -60,25 +82,36 @@ export class PostService {
             result = {
               platform,
               success: false,
-              error: `Unknown platform: ${platform}`
+              error: `Unknown platform: ${platform}`,
+              status: 'failed'
             }
         }
 
-        results.push(result)
+        // Notify progress
+        onProgress?.(platform, result)
 
         if (!result.success && result.error) {
           errors.push(`${platform}: ${result.error}`)
         }
+
+        return result
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Unknown error'
-        results.push({
+        const failedResult: PostResult = {
           platform,
           success: false,
-          error: errorMessage
-        })
+          error: errorMessage,
+          status: 'failed'
+        }
+        
+        onProgress?.(platform, failedResult)
         errors.push(`${platform}: ${errorMessage}`)
+        return failedResult
       }
-    }
+    })
+
+    // Wait for all posts to complete
+    const results = await Promise.all(postPromises)
 
     return {
       isPosting: false,

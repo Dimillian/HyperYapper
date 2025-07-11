@@ -1,4 +1,4 @@
-import { X, CheckCircle, AlertCircle, ExternalLink, Clock, MessageCircle } from 'lucide-react'
+import { X, CheckCircle, AlertCircle, ExternalLink, Clock, MessageCircle, Loader2 } from 'lucide-react'
 import { SiThreads, SiMastodon, SiBluesky } from 'react-icons/si'
 import { Notification, ReplyCount } from './types'
 
@@ -42,6 +42,22 @@ export function NotificationCard({ notification, onDismiss, onMarkAsRead }: Noti
         return 'border-red-500/30 bg-red-900/10'
       default:
         return 'border-blue-500/30 bg-blue-900/10'
+    }
+  }
+
+  const getStatusIcon = (status?: string, success?: boolean) => {
+    switch (status) {
+      case 'pending':
+        return <Clock className="w-3 h-3 text-yellow-400" />
+      case 'posting':
+        return <Loader2 className="w-3 h-3 text-blue-400 animate-spin" />
+      case 'completed':
+        return <CheckCircle className="w-3 h-3 text-green-400" />
+      case 'failed':
+        return <AlertCircle className="w-3 h-3 text-red-400" />
+      default:
+        // Fallback to old behavior
+        return success ? <CheckCircle className="w-3 h-3 text-green-400" /> : <AlertCircle className="w-3 h-3 text-red-400" />
     }
   }
 
@@ -139,9 +155,7 @@ export function NotificationCard({ notification, onDismiss, onMarkAsRead }: Noti
                 <div className="flex items-center gap-2">
                   <div className="flex items-center gap-1 flex-shrink-0">
                     {getPlatformIcon(result.platform)}
-                    {!result.success && (
-                      <AlertCircle className="w-2 h-2 text-red-400" />
-                    )}
+                    {getStatusIcon(result.status, result.success)}
                   </div>
                   <span className="text-xs text-purple-200 capitalize flex-shrink-0">
                     {result.platform}

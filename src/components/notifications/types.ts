@@ -35,15 +35,17 @@ export interface PostResult {
   postId?: string
   postUrl?: string
   error?: string
+  status?: 'pending' | 'posting' | 'completed' | 'failed'
 }
 
 export interface NotificationContextType {
   notifications: Notification[]
-  addNotification: (notification: Omit<Notification, 'id' | 'timestamp'>) => void
+  addNotification: (notification: Omit<Notification, 'id' | 'timestamp'>) => Notification
   dismissNotification: (id: string) => void
   markAsRead: (id: string) => void
   clearAll: () => void
   updateNotificationReplyCounts: (notificationId: string, replyCounts: ReplyCount[]) => void
+  updateNotification: (id: string, updates: Partial<Notification>) => void
 }
 
 export interface NotificationSidebarProps {
