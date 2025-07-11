@@ -16,7 +16,6 @@ function ThreadsCallbackContent() {
     const handleCallback = async () => {
       try {
         const code = searchParams.get('code')
-        const state = searchParams.get('state')
         const errorParam = searchParams.get('error')
         const errorReason = searchParams.get('error_reason')
 
@@ -30,14 +29,14 @@ function ThreadsCallbackContent() {
           return
         }
 
-        if (!code || !state) {
-          setError('Missing authorization code or state parameter')
+        if (!code) {
+          setError('Missing authorization code')
           setStatus('error')
           return
         }
 
         // Exchange code for access token
-        const session = await ThreadsAuth.exchangeCodeForToken(code, state)
+        const session = await ThreadsAuth.exchangeCodeForToken(code)
         
         // Store session
         const sessionManager = SessionManager.getInstance()

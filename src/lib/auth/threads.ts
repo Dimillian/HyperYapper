@@ -20,29 +20,17 @@ export class ThreadsAuth {
 
     const redirectUri = `${window.location.origin}/auth/threads/callback`
     const scope = this.SCOPES.join(',')
-    const state = this.generateState()
-    
-    // Store state for verification
-    sessionStorage.setItem('threads_oauth_state', state)
     
     const authUrl = new URL('https://threads.net/oauth/authorize')
     authUrl.searchParams.set('client_id', META_APP_ID)
     authUrl.searchParams.set('redirect_uri', redirectUri)
     authUrl.searchParams.set('scope', scope)
     authUrl.searchParams.set('response_type', 'code')
-    authUrl.searchParams.set('state', state)
     
     return authUrl.toString()
   }
 
-  static async exchangeCodeForToken(code: string, state: string): Promise<ThreadsSession> {
-    // Verify state parameter
-    const storedState = sessionStorage.getItem('threads_oauth_state')
-    if (!storedState || storedState !== state) {
-      throw new Error('Invalid state parameter')
-    }
-    
-    sessionStorage.removeItem('threads_oauth_state')
+  static async exchangeCodeForToken(code: string): Promise<ThreadsSession> {
 
     const redirectUri = `${window.location.origin}/auth/threads/callback`
     
@@ -88,7 +76,4 @@ export class ThreadsAuth {
     }
   }
 
-  private static generateState(): string {
-    return Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2)
-  }
 }
