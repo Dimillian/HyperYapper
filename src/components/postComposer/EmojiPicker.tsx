@@ -31,6 +31,9 @@ export function CustomEmojiPicker({
   const pickerRef = useRef<HTMLDivElement>(null)
   const emojiPickerRef = useRef<any>(null)
   const [activeCategory, setActiveCategory] = useState(Categories.SMILEYS_PEOPLE)
+  const [isDragging, setIsDragging] = useState(false)
+  const [dragStartY, setDragStartY] = useState(0)
+  const [currentY, setCurrentY] = useState(0)
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -85,6 +88,27 @@ export function CustomEmojiPicker({
     }, 10)
   }
 
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setIsDragging(true)
+    setDragStartY(e.touches[0].clientY)
+  }
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging) return
+    const deltaY = e.touches[0].clientY - dragStartY
+    if (deltaY > 0) {
+      setCurrentY(deltaY)
+    }
+  }
+
+  const handleTouchEnd = () => {
+    setIsDragging(false)
+    if (currentY > 100) {
+      onClose()
+    }
+    setCurrentY(0)
+  }
+
   const getPickerPosition = () => {
     if (typeof window === 'undefined') {
       return { top: '0px', left: '0px' }
@@ -95,11 +119,12 @@ export function CustomEmojiPicker({
     const isMobile = viewportWidth < 768
 
     if (isMobile) {
-      // On mobile, center the picker
+      // On mobile, position as bottom sheet
       return {
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)'
+        bottom: '0',
+        left: '0',
+        right: '0',
+        transform: 'none'
       }
     }
 
@@ -145,25 +170,44 @@ export function CustomEmojiPicker({
     <>
       {/* Mobile backdrop */}
       {isMobile && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40" />
+        <div 
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40" 
+          onClick={onClose}
+        />
       )}
       
       <div 
         ref={pickerRef}
-        className={`fixed z-50 ${isMobile ? 'w-11/12 max-w-sm' : ''}`}
-        style={position}
+        className={`fixed z-50 ${isMobile ? 'w-full bg-black/95 rounded-t-2xl border-t border-purple-400/40 animate-slideUp' : ''}`}
+        style={{
+          ...position,
+          transform: isMobile && currentY > 0 ? `translateY(${currentY}px)` : position.transform,
+          transition: isDragging ? 'none' : 'transform 0.3s ease-out'
+        }}
       >
       <div className="relative">
+        {/* Mobile drag handle */}
+        {isMobile && (
+          <div 
+            className="flex justify-center py-3 cursor-grab active:cursor-grabbing"
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
+            <div className="w-12 h-1.5 bg-purple-400/60 rounded-full" />
+          </div>
+        )}
+        
         {/* Custom styling wrapper for cyberpunk theme */}
-        <div className="emoji-picker-wrapper">
+        <div className={`emoji-picker-wrapper ${isMobile ? 'border-0 rounded-none bg-transparent' : ''}`}>
           <div className="relative">
             <EmojiPicker
               onEmojiClick={handleEmojiClick}
               theme={Theme.DARK}
               emojiStyle={EmojiStyle.NATIVE}
               searchPlaceholder="Search emojis..."
-              width={isMobile ? 300 : 320}
-              height={isMobile ? 310 : 340}
+              width={isMobile ? typeof window !== 'undefined' ? window.innerWidth : 375 : 320}
+              height={isMobile ? 400 : 340}
               previewConfig={{
                 showPreview: false
               }}

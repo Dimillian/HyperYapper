@@ -44,8 +44,8 @@ export function Toolbar({
   }
 
   return (
-    <div className="flex items-center justify-between pt-2">
-      <div className="flex items-center gap-2">
+    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-2">
+      <div className="flex items-center gap-2 flex-wrap">
         <button 
           onClick={() => fileInputRef.current?.click()}
           className="p-2 rounded-lg bg-black/50 border border-purple-400/30 hover:border-purple-300/50 hover:bg-purple-500/10 transition-all duration-200"
@@ -90,7 +90,7 @@ export function Toolbar({
         </button>
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 self-end sm:self-auto">
         {/* Platform Indicators */}
         <div className="flex items-center gap-1">
           {selectedPlatforms.map(platformId => {
@@ -115,7 +115,7 @@ export function Toolbar({
         <button 
           onClick={onPost}
           disabled={!content.trim() || isOverLimit || selectedPlatforms.length === 0 || isPosting}
-          className="flex items-center gap-2 px-6 py-2 bg-purple-500 hover:bg-purple-400 disabled:bg-gray-600/80 disabled:cursor-not-allowed rounded-lg transition-all duration-200 font-medium text-white neon-glow hover:neon-glow-strong"
+          className="flex items-center justify-center gap-2 px-6 py-2 bg-purple-500 hover:bg-purple-400 disabled:bg-gray-600/80 disabled:cursor-not-allowed rounded-lg transition-all duration-200 font-medium text-white neon-glow hover:neon-glow-strong w-full sm:w-auto"
         >
           {isPosting ? (
             <>
