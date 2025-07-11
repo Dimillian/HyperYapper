@@ -57,7 +57,7 @@ export function AccountCard({ platform, isConnected, session, onConnect, onDisco
   const userInfo = getUserInfo()
 
   return (
-    <div className="flex items-center justify-between p-3 bg-black/60 rounded-lg border border-purple-400/20">
+    <div className="flex items-center justify-between p-3 bg-purple-900/20 rounded-lg border border-purple-400/30">
       <div className="flex items-center gap-3">
         <Icon className={`w-5 h-5 ${config.iconColor} ${config.iconShadow}`} />
         <div>

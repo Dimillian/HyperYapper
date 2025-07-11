@@ -18,7 +18,7 @@ export function BlueSkyConnect({
   error
 }: BlueSkyConnectProps) {
   return (
-    <div className="p-3 bg-black/40 rounded-lg border border-purple-400/20 space-y-3">
+    <div className="p-3 bg-purple-900/30 rounded-lg border border-purple-400/30 space-y-3">
       <div className="flex items-center justify-between">
         <h4 className="text-sm font-medium text-purple-100">Connect Bluesky</h4>
         <button
@@ -34,7 +34,7 @@ export function BlueSkyConnect({
         value={handle}
         onChange={(e) => onHandleChange(e.target.value)}
         placeholder="alice.bsky.social"
-        className="w-full px-3 py-2 bg-black/60 border border-purple-400/30 rounded text-purple-100 placeholder-purple-300/50 text-sm focus:border-purple-300/60 focus:outline-none focus:shadow-[0_0_15px_rgba(168,85,247,0.3)]"
+        className="w-full px-3 py-2 bg-black/80 border border-purple-400/30 rounded text-purple-100 placeholder-purple-300/50 text-sm focus:border-purple-300/60 focus:outline-none focus:shadow-[0_0_15px_rgba(168,85,247,0.3)]"
         disabled={isConnecting}
       />
       

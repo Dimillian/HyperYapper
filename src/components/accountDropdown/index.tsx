@@ -197,7 +197,7 @@ export function AccountDropdown() {
 
       {/* Dropdown Menu */}
       {state.isOpen && (
-        <div className="absolute right-0 top-full mt-2 w-80 glass-card border border-purple-300/40 rounded-lg shadow-xl z-50 bright-glow">
+        <div className="absolute right-0 top-full mt-2 w-80 bg-black/90 backdrop-blur-xl border border-purple-300/40 rounded-lg shadow-xl z-50 bright-glow">
           <div className="p-4">
             <h3 className="text-sm font-semibold text-purple-100 mb-3 glow-text">Account Management</h3>
             
